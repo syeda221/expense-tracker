@@ -20,7 +20,7 @@ class ExpenseController extends Controller
 
     public function index(Request $request): View
     {
-        $filters = $request->only(['search', 'category', 'merchant', 'payment_method', 'date_from', 'date_to']);
+        $filters = $request->only(['search', 'category', 'merchant', 'payment_method', 'date_from', 'date_to', 'min_amount', 'max_amount', 'is_recurring', 'sort', 'order']);
         $expenses = $this->expenseService->getPaginated($request->user()->id, $filters);
 
         return view('expenses.index', compact('expenses', 'filters'));

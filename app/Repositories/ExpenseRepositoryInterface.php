@@ -51,4 +51,6 @@ interface ExpenseRepositoryInterface
     public function getWeeklyTrend(int $userId): Collection;
 
     public function getCurrentMonthDailyBreakdown(int $userId): Collection;
+
+    public function sumByFilters(int $userId, array $filters = []): array;
 }

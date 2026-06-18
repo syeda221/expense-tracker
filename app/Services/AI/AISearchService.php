@@ -12,8 +12,10 @@ class AISearchService
     private readonly string $apiKey;
     private readonly string $model;
     private readonly float $temperature;
-    private readonly string $promptTemplate;
+    private readonly string $systemPrompt;
+    private readonly string $userTemplate;
     private readonly int $cacheTtl;
+    private readonly string $promptVersion;
 
     private const ALLOWED_FIELDS = [
         'category', 'merchant', 'payment_method',
@@ -40,13 +42,15 @@ class AISearchService
         $this->apiKey = config('ai.providers.groq.api_key');
         $this->model = config('ai.providers.groq.model', 'llama-3.3-70b-versatile');
         $this->temperature = 0.1;
-        $this->promptTemplate = config('ai.search.prompt');
+        $this->systemPrompt = config('ai.search.system_prompt');
+        $this->userTemplate = config('ai.search.user_template', ':query');
         $this->cacheTtl = config('ai.search.cache_ttl', 3600);
+        $this->promptVersion = md5($this->systemPrompt);
     }
 
     public function parse(string $query): array
     {
-        $cacheKey = 'ai_search_params_' . md5($query);
+        $cacheKey = 'ai_search_v2_' . $this->promptVersion . '_' . md5($query);
 
         return Cache::remember($cacheKey, $this->cacheTtl, function () use ($query) {
             return $this->callGroq($query);
@@ -55,14 +59,11 @@ class AISearchService
 
     private function callGroq(string $query): array
     {
-        $prompt = str_replace(
-            [':query', ':date'],
-            [$query, now()->toDateString()],
-            $this->promptTemplate
-        );
+        $systemContent = str_replace(':date', now()->toDateString(), $this->systemPrompt);
+        $userContent = str_replace(':query', $query, $this->userTemplate);
 
         try {
-            $rawBody = $this->sendRequest($prompt);
+            $rawBody = $this->sendRequest($systemContent, $userContent);
             $parsed = $this->parseResponse($rawBody, $query);
 
             Log::info('AI search parsed successfully', [
@@ -81,7 +82,7 @@ class AISearchService
         }
     }
 
-    private function sendRequest(string $prompt): string
+    private function sendRequest(string $systemContent, string $userContent): string
     {
         $response = Http::timeout(30)
             ->retry(2, 1000, throw: false)
@@ -89,10 +90,11 @@ class AISearchService
             ->post('https://api.groq.com/openai/v1/chat/completions', [
                 'model' => $this->model,
                 'messages' => [
-                    ['role' => 'user', 'content' => $prompt],
+                    ['role' => 'system', 'content' => $systemContent],
+                    ['role' => 'user', 'content' => $userContent],
                 ],
                 'temperature' => $this->temperature,
-                'max_tokens' => 256,
+                'max_tokens' => 512,
             ]);
 
         if ($response->failed()) {

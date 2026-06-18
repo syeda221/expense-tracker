@@ -13,7 +13,7 @@ class ExpenseRepository implements ExpenseRepositoryInterface
         return Expense::where('user_id', $userId)->get();
     }
 
-    public function findByUserPaginated(int $userId, array $filters = []): LengthAwarePaginator
+    private function buildFilteredQuery(int $userId, array $filters = []): \Illuminate\Database\Eloquent\Builder
     {
         $query = Expense::where('user_id', $userId);
 
@@ -61,6 +61,13 @@ class ExpenseRepository implements ExpenseRepositoryInterface
             $query->where('is_recurring', filter_var($filters['is_recurring'], FILTER_VALIDATE_BOOLEAN));
         }
 
+        return $query;
+    }
+
+    public function findByUserPaginated(int $userId, array $filters = []): LengthAwarePaginator
+    {
+        $query = $this->buildFilteredQuery($userId, $filters);
+
         $sort = $filters['sort'] ?? 'expense_date';
         $order = $filters['order'] ?? 'desc';
 
@@ -68,6 +75,16 @@ class ExpenseRepository implements ExpenseRepositoryInterface
             ->orderBy('created_at', 'desc')
             ->paginate(15)
             ->withQueryString();
+    }
+
+    public function sumByFilters(int $userId, array $filters = []): array
+    {
+        $query = $this->buildFilteredQuery($userId, $filters);
+
+        return [
+            'total' => (float) $query->sum('amount'),
+            'count' => $query->count(),
+        ];
     }
 
     public function find(int $id): ?Expense

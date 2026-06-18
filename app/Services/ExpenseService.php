@@ -28,12 +28,16 @@ class ExpenseService
             return [
                 'filters' => ['search' => $query],
                 'used_ai' => false,
+                'summary' => null,
             ];
         }
+
+        $summary = $this->expenseRepository->sumByFilters($userId, $aiFilters);
 
         return [
             'filters' => $aiFilters,
             'used_ai' => true,
+            'summary' => $summary,
         ];
     }
 

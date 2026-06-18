@@ -9,10 +9,14 @@
                 <input type="text" name="q" value="{{ $query ?? '' }}" placeholder="Ask AI about your expenses..." autofocus autocomplete="off">
             </div>
             <div class="search-examples">
-                <button type="submit" name="q" value="How much did I spend on food?" class="search-example-btn" onclick="this.form.submit()">How much did I spend on food?</button>
-                <button type="submit" name="q" value="Show Uber expenses" class="search-example-btn" onclick="this.form.submit()">Show Uber expenses</button>
-                <button type="submit" name="q" value="This month's shopping" class="search-example-btn" onclick="this.form.submit()">This month's shopping</button>
-                <button type="submit" name="q" value="Highest expenses this year" class="search-example-btn" onclick="this.form.submit()">Highest expenses this year</button>
+                <button type="submit" name="q" value="How much did I spend on food?" class="search-example-btn" onclick="this.form.submit()">Food expenses</button>
+                <button type="submit" name="q" value="Entertainment expenses this month" class="search-example-btn" onclick="this.form.submit()">Entertainment</button>
+                <button type="submit" name="q" value="Fuel expenses above 5000" class="search-example-btn" onclick="this.form.submit()">Fuel above 5000</button>
+                <button type="submit" name="q" value="Show shopping by card" class="search-example-btn" onclick="this.form.submit()">Shopping by card</button>
+                <button type="submit" name="q" value="Show Uber expenses" class="search-example-btn" onclick="this.form.submit()">Uber expenses</button>
+                <button type="submit" name="q" value="Bills between January and March" class="search-example-btn" onclick="this.form.submit()">Bills Jan–Mar</button>
+                <button type="submit" name="q" value="Netflix subscriptions" class="search-example-btn" onclick="this.form.submit()">Subscriptions</button>
+                <button type="submit" name="q" value="Highest expense this year" class="search-example-btn" onclick="this.form.submit()">Highest this year</button>
             </div>
         </form>
     </div>
@@ -25,40 +29,95 @@
                         <span class="badge-premium ai">AI</span>
                         <span style="font-size:14px;color:var(--text-muted)">Search results for:</span>
                         <strong style="font-size:15px;color:var(--text)">"{{ $query }}"</strong>
-                        <span style="margin-left:auto;font-size:13px;color:var(--text-dim)">{{ $results->total() }} result{{ $results->total() !== 1 ? 's' : '' }}</span>
                     </div>
                 </div>
             </div>
 
-            @if ($results->isNotEmpty())
-                @foreach ($results as $expense)
-                    <a href="{{ route('expenses.show', $expense) }}" style="display:flex;align-items:center;gap:16px;padding:16px 20px;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;text-decoration:none;transition:all var(--transition-fast);margin-bottom:8px">
-                        <div style="width:40px;height:40px;border-radius:10px;background:var(--bg-hover);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--text-dim)">
-                            <i data-lucide="circle-dollar" style="width:18px;height:18px"></i>
-                        </div>
-                        <div style="flex:1;min-width:0">
-                            <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:2px">{{ $expense->description }}</div>
-                            <div style="font-size:12px;color:var(--text-dim);display:flex;align-items:center;gap:10px">
-                                <span>{{ $expense->expense_date->format('M d, Y') }}</span>
-                                <span>·</span>
-                                <span>{{ $expense->merchant ?? 'N/A' }}</span>
-                                <span>·</span>
-                                <span>{{ $expense->payment_method }}</span>
+            @if ($summary && $summary['count'] > 0)
+                @php
+                    $label = $filters['category'] ?? $filters['merchant'] ?? 'Matching';
+                @endphp
+                <div class="card-premium" style="margin-bottom:20px;border-left:4px solid var(--primary)">
+                    <div class="card-body">
+                        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+                            <div style="width:56px;height:56px;border-radius:14px;background:var(--primary-subtle);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--primary)">
+                                <i data-lucide="chart-pie" style="width:28px;height:28px"></i>
+                            </div>
+                            <div style="flex:1;min-width:0">
+                                <h3 style="margin:0 0 4px;font-size:20px;font-weight:700;color:var(--text)">{{ $label }} Expenses</h3>
+                                <p style="margin:0;font-size:13px;color:var(--text-dim)">AI-powered summary based on your search</p>
+                            </div>
+                            <div style="display:flex;gap:32px;flex-shrink:0">
+                                <div style="text-align:center">
+                                    <p style="margin:0 0 2px;font-size:11px;color:var(--text-dim);font-weight:500;text-transform:uppercase;letter-spacing:0.5px">Total Spent</p>
+                                    <p style="margin:0;font-size:22px;font-weight:800;color:var(--success)">${{ number_format($summary['total'], 2) }}</p>
+                                </div>
+                                <div style="text-align:center">
+                                    <p style="margin:0 0 2px;font-size:11px;color:var(--text-dim);font-weight:500;text-transform:uppercase;letter-spacing:0.5px">Transactions</p>
+                                    <p style="margin:0;font-size:22px;font-weight:800;color:var(--text)">{{ $summary['count'] }}</p>
+                                </div>
                             </div>
                         </div>
-                        <div style="text-align:right;flex-shrink:0">
-                            <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px">${{ number_format($expense->amount, 2) }}</div>
-                            <span class="badge-premium category" style="font-size:11px">{{ $expense->category }}</span>
-                        </div>
-                        <i data-lucide="chevron-right" style="width:18px;height:18px;color:var(--text-dim);flex-shrink:0"></i>
-                    </a>
-                @endforeach
+                    </div>
+                </div>
 
-                @if ($results->hasPages())
-                    <div style="margin-top:20px;display:flex;justify-content:center">
-                        {{ $results->withQueryString()->links('pagination::bootstrap-5') }}
+                @if ($viewExpensesUrl)
+                    <div style="text-align:center;margin-top:20px">
+                        <a href="{{ $viewExpensesUrl }}" class="btn-premium btn-primary lg" style="justify-content:center">
+                            <i data-lucide="list"></i>
+                            View Expense Records
+                        </a>
                     </div>
                 @endif
+            @elseif ($usedAi && $summary !== null && $summary['count'] === 0)
+                <div class="card-premium">
+                    <div class="empty-state">
+                        <div class="empty-state-icon"><i data-lucide="search-x"></i></div>
+                        <p class="empty-state-title">No matching expenses</p>
+                        <p class="empty-state-text">Try a different search or adjust your query</p>
+                        <a href="{{ route('expenses.index') }}" class="btn-premium btn-secondary">
+                            <i data-lucide="list"></i>
+                            View All Expenses
+                        </a>
+                    </div>
+                </div>
+            @elseif (!$usedAi && $results->isNotEmpty())
+                <div class="card-premium">
+                    <div class="card-body" style="padding:16px 24px">
+                        <p style="margin:0;font-size:14px;color:var(--text-muted);text-align:center">
+                            AI could not parse your query. Showing keyword-based results instead.
+                        </p>
+                    </div>
+                </div>
+                <div style="margin-top:16px">
+                    @foreach ($results as $expense)
+                        <a href="{{ route('expenses.show', $expense) }}" style="display:flex;align-items:center;gap:16px;padding:16px 20px;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;text-decoration:none;transition:all var(--transition-fast);margin-bottom:8px">
+                            <div style="width:40px;height:40px;border-radius:10px;background:var(--bg-hover);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--text-dim)">
+                                <i data-lucide="circle-dollar" style="width:18px;height:18px"></i>
+                            </div>
+                            <div style="flex:1;min-width:0">
+                                <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:2px">{{ Str::limit($expense->description, 40) }}</div>
+                                <div style="font-size:12px;color:var(--text-dim);display:flex;align-items:center;gap:10px">
+                                    <span>{{ $expense->expense_date->format('M d, Y') }}</span>
+                                    <span>·</span>
+                                    <span>{{ $expense->merchant ?? 'N/A' }}</span>
+                                    <span>·</span>
+                                    <span>{{ $expense->payment_method }}</span>
+                                </div>
+                            </div>
+                            <div style="text-align:right;flex-shrink:0">
+                                <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px">${{ number_format($expense->amount, 2) }}</div>
+                                <span class="badge-premium category" style="font-size:11px">{{ $expense->category }}</span>
+                            </div>
+                            <i data-lucide="chevron-right" style="width:18px;height:18px;color:var(--text-dim);flex-shrink:0"></i>
+                        </a>
+                    @endforeach
+                    @if ($results->hasPages())
+                        <div style="margin-top:20px;display:flex;justify-content:center">
+                            {{ $results->withQueryString()->links('pagination::bootstrap-5') }}
+                        </div>
+                    @endif
+                </div>
             @else
                 <div class="card-premium">
                     <div class="empty-state">

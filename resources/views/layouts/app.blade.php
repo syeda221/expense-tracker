@@ -50,9 +50,9 @@
                     <i data-lucide="trending-up"></i>
                     <span>Analytics</span>
                 </a>
-                <a href="#" class="sidebar-link">
+                <a href="{{ route('advisor') }}" class="sidebar-link {{ request()->routeIs('advisor*') ? 'active' : '' }}">
                     <i data-lucide="sparkles"></i>
-                    <span>AI Insights</span>
+                    <span>AI Advisor</span>
                     <span class="badge-premium ai ms-auto">NEW</span>
                 </a>
 
@@ -132,6 +132,12 @@
                     <div class="alert-premium alert-error fade-in">
                         <i data-lucide="alert-circle" style="width:18px;height:18px;flex-shrink:0"></i>
                         <span>{{ session('error') }}</span>
+                    </div>
+                @endif
+                @if (session('warning'))
+                    <div class="alert-premium fade-in" style="background:rgba(255,181,71,0.12);border:1px solid rgba(255,181,71,0.25);color:var(--warning)">
+                        <i data-lucide="alert-triangle" style="width:18px;height:18px;flex-shrink:0"></i>
+                        <span>{{ session('warning') }}</span>
                     </div>
                 @endif
 

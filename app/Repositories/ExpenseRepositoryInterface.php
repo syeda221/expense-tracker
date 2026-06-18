@@ -58,5 +58,9 @@ interface ExpenseRepositoryInterface
 
     public function getPeriodCount(int $userId, string $startDate, string $endDate): int;
 
+    public function getCategoryTotalForPeriod(int $userId, string $category, string $startDate, string $endDate): float;
+
+    public function getMerchantTotalForPeriod(int $userId, string $merchant, string $startDate, string $endDate): float;
+
     public function sumByFilters(int $userId, array $filters = []): array;
 }

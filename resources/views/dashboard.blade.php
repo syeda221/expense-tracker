@@ -245,6 +245,82 @@
         </div>
     </div>
 
+    {{-- Budget summary card --}}
+    @if ($budgetSummary['has_budget'] ?? false)
+    <div class="dashboard-widgets fade-in-up stagger-5" style="margin-top:24px">
+        <div class="card-premium">
+            <div class="card-header">
+                <div class="widget-header" style="margin-bottom:0">
+                    <h5 class="widget-title">
+                        <i data-lucide="target"></i>
+                        Budget Overview
+                    </h5>
+                    <a href="{{ route('advisor') }}" class="widget-action">View Details</a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div style="display:grid;grid-template-columns:1fr 2fr;gap:24px;align-items:center">
+                    {{-- Progress ring --}}
+                    <div style="text-align:center">
+                        @php
+                            $overall = $budgetSummary['overall'] ?? [];
+                            $pct = $overall['percentage'] ?? 0;
+                            $spent = $overall['spent'] ?? 0;
+                            $budget = $overall['budget'] ?? 0;
+                            $remaining = $overall['remaining'] ?? 0;
+                            $ringColor = $pct >= 100 ? 'var(--danger)' : ($pct >= 80 ? 'var(--warning)' : 'var(--primary)');
+                            $circum = 2 * pi() * 42;
+                            $offset = $circum - ($pct / 100) * $circum;
+                        @endphp
+                        <svg width="110" height="110" viewBox="0 0 100 100" style="display:block;margin:0 auto">
+                            <circle cx="50" cy="50" r="42" fill="none" stroke="var(--border-subtle)" stroke-width="8"/>
+                            <circle cx="50" cy="50" r="42" fill="none" stroke="{{ $ringColor }}" stroke-width="8"
+                                    stroke-linecap="round"
+                                    stroke-dasharray="{{ $circum }}"
+                                    stroke-dashoffset="{{ max(0, $offset) }}"
+                                    transform="rotate(-90 50 50)"
+                                    style="transition:stroke-dashoffset 0.6s ease"/>
+                        </svg>
+                        <div style="margin-top:8px">
+                            <span style="font-size:22px;font-weight:800;color:{{ $ringColor }};font-family:var(--font-mono)">{{ $pct }}%</span>
+                            <p style="margin:2px 0 0;font-size:11px;color:var(--text-dim)">used</p>
+                        </div>
+                    </div>
+                    {{-- Details --}}
+                    <div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                            <div style="padding:12px;background:var(--bg-hover);border-radius:8px">
+                                <p style="margin:0 0 2px;font-size:11px;color:var(--text-dim)">Budget</p>
+                                <p style="margin:0;font-size:18px;font-weight:700;color:var(--text);font-family:var(--font-mono)">${{ number_format($budget, 2) }}</p>
+                            </div>
+                            <div style="padding:12px;background:var(--bg-hover);border-radius:8px">
+                                <p style="margin:0 0 2px;font-size:11px;color:var(--text-dim)">Spent</p>
+                                <p style="margin:0;font-size:18px;font-weight:700;color:var(--primary);font-family:var(--font-mono)">${{ number_format($spent, 2) }}</p>
+                            </div>
+                            <div style="padding:12px;background:var(--bg-hover);border-radius:8px">
+                                <p style="margin:0 0 2px;font-size:11px;color:var(--text-dim)">Remaining</p>
+                                <p style="margin:0;font-size:18px;font-weight:700;color:{{ $remaining > 0 ? 'var(--positive)' : 'var(--negative)' }};font-family:var(--font-mono)">${{ number_format($remaining, 2) }}</p>
+                            </div>
+                            <div style="padding:12px;background:var(--bg-hover);border-radius:8px">
+                                <p style="margin:0 0 2px;font-size:11px;color:var(--text-dim)">Daily Budget</p>
+                                <p style="margin:0;font-size:18px;font-weight:700;color:var(--text);font-family:var(--font-mono)">${{ number_format($overall['daily_budget'] ?? 0, 2) }}</p>
+                            </div>
+                        </div>
+                        @if (!empty($budgetSummary['alerts']))
+                            <div style="margin-top:12px;padding:10px 14px;background:rgba(255,181,71,0.1);border:1px solid rgba(255,181,71,0.2);border-radius:8px">
+                                <p style="margin:0 0 6px;font-size:12px;font-weight:600;color:var(--warning)">⚠️ Budget Alerts</p>
+                                @foreach ($budgetSummary['alerts'] as $alert)
+                                    <p style="margin:0 0 2px;font-size:12px;color:var(--text-dim)">{{ $alert['label'] }}: {{ $alert['percentage'] }}% used</p>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <div class="dashboard-bottom fade-in-up stagger-5" style="margin-top:24px">
         <div class="card-premium" style="overflow:hidden">
             <div class="card-body" style="padding:0">

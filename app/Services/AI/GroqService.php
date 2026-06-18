@@ -35,6 +35,38 @@ class GroqService implements AIServiceInterface
         return 'groq';
     }
 
+    public function ask(string $prompt, float $temperature = 0.7, int $maxTokens = 1024): string
+    {
+        $url = 'https://api.groq.com/openai/v1/chat/completions';
+
+        $response = Http::timeout(30)
+            ->retry(1, 1000, throw: false)
+            ->withToken($this->apiKey)
+            ->post($url, [
+                'model' => 'llama3-70b-8192',
+                'messages' => [
+                    ['role' => 'user', 'content' => $prompt],
+                ],
+                'temperature' => $temperature,
+                'max_tokens' => $maxTokens,
+            ]);
+
+        if ($response->failed()) {
+            $status = $response->status();
+            $body = $response->body();
+            Log::error("Groq API ask request failed", [
+                'status' => $status,
+                'body' => $body,
+            ]);
+            throw new ConnectionException("Groq API returned status {$status}: {$body}");
+        }
+
+        $data = $response->json();
+        $text = $data['choices'][0]['message']['content'] ?? '';
+
+        return trim($text);
+    }
+
     private function sendRequest(string $prompt): string
     {
         $url = 'https://api.groq.com/openai/v1/chat/completions';

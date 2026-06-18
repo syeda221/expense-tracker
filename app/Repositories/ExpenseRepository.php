@@ -265,4 +265,22 @@ class ExpenseRepository implements ExpenseRepositoryInterface
             ->whereDate('expense_date', '<=', $endDate)
             ->count();
     }
+
+    public function getCategoryTotalForPeriod(int $userId, string $category, string $startDate, string $endDate): float
+    {
+        return (float) Expense::where('user_id', $userId)
+            ->where('category', $category)
+            ->whereDate('expense_date', '>=', $startDate)
+            ->whereDate('expense_date', '<=', $endDate)
+            ->sum('amount');
+    }
+
+    public function getMerchantTotalForPeriod(int $userId, string $merchant, string $startDate, string $endDate): float
+    {
+        return (float) Expense::where('user_id', $userId)
+            ->where('merchant', $merchant)
+            ->whereDate('expense_date', '>=', $startDate)
+            ->whereDate('expense_date', '<=', $endDate)
+            ->sum('amount');
+    }
 }

@@ -13,6 +13,7 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
         $stats = app(\App\Services\ExpenseService::class)->getDashboardStats(auth()->id());
+        $budgetSummary = app(\App\Services\BudgetService::class)->getDashboardSummary(auth()->id());
         $repo = app(ExpenseRepositoryInterface::class);
         $userId = auth()->id();
 
@@ -83,6 +84,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         }
 
         $stats['chartRanges'] = $ranges;
+        $stats['budgetSummary'] = $budgetSummary;
 
         return view('dashboard', $stats);
     })->name('dashboard');
@@ -94,6 +96,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::view('/advisor', 'advisor')->name('advisor');
+    Route::post('/advisor/chat', App\Http\Controllers\FinancialAdvisorController::class)->name('advisor.chat');
 });
 
 require __DIR__.'/auth.php';

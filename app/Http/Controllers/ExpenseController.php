@@ -6,6 +6,7 @@ use App\Http\Requests\StoreExpenseRequest;
 use App\Http\Requests\UpdateExpenseRequest;
 use App\Models\Expense;
 use App\Services\AI\AIManager;
+use App\Services\BudgetService;
 use App\Services\ExpenseService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,7 +16,8 @@ class ExpenseController extends Controller
 {
     public function __construct(
         private readonly ExpenseService $expenseService,
-        private readonly AIManager $aiManager
+        private readonly AIManager $aiManager,
+        private readonly BudgetService $budgetService,
     ) {}
 
     public function index(Request $request): View
@@ -54,8 +56,18 @@ class ExpenseController extends Controller
             ]);
         }
 
-        return to_route('expenses.show', $expense)
-            ->with('success', 'Expense saved and categorized by AI.');
+        $alerts = $this->budgetService->checkAlerts($request->user()->id, $expense->category, (float) $expense->amount);
+        $alertMessages = [];
+        foreach ($alerts as $alert) {
+            $alertMessages[] = $alert['message'];
+        }
+
+        $flash = ['success' => 'Expense saved and categorized by AI.'];
+        if (!empty($alertMessages)) {
+            $flash['warning'] = implode(' ', $alertMessages);
+        }
+
+        return to_route('expenses.show', $expense)->with($flash);
     }
 
     public function show(Request $request, Expense $expense): View

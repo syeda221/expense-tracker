@@ -1,345 +1,433 @@
 <x-app-layout>
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h4 class="mb-1">Dashboard</h4>
-            <p class="text-muted mb-0 small">{{ now()->format('l, F j, Y') }}</p>
-        </div>
-        <a href="{{ route('expenses.create') }}" class="btn btn-primary">
-            <i class="bi bi-plus-lg"></i> Add Expense
-        </a>
+    @php
+        $monthlyChange = $previousMonthTotal > 0 ? (($monthlyTotal - $previousMonthTotal) / $previousMonthTotal) * 100 : 0;
+        $highestCatTotal = $categoryDistribution->isNotEmpty() ? $categoryDistribution->first()->total : 0;
+        $highestCatName = $categoryDistribution->isNotEmpty() ? $categoryDistribution->first()->category : 'N/A';
+    @endphp
+
+    <div class="page-header fade-in">
+        <h1 class="page-title">Good {{ now()->hour < 12 ? 'morning' : (now()->hour < 17 ? 'afternoon' : 'evening') }}, {{ Auth::user()->name }}</h1>
+        <p class="page-subtitle">Here's your financial overview for {{ now()->format('F Y') }}</p>
     </div>
 
-    <div class="row g-3 mb-4">
-        <div class="col-6 col-md-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="bg-primary bg-opacity-10 p-2 rounded">
-                            <i class="bi bi-calendar-day fs-4 text-primary"></i>
-                        </div>
-                        <div class="min-w-0">
-                            <p class="text-muted small mb-0">Today</p>
-                            <h4 class="fw-bold mb-0 text-primary">${{ number_format($todayTotal, 2) }}</h4>
-                            <small class="text-muted">{{ $todayCount }} transaction{{ $todayCount !== 1 ? 's' : '' }}</small>
-                        </div>
+    <div class="dashboard-stats fade-in-up stagger-1">
+        <div class="card-premium hover-lift">
+            <div class="card-body">
+                <div class="stat-card">
+                    <div class="stat-card-icon" style="background:var(--primary-subtle);color:var(--primary)">
+                        <i data-lucide="wallet"></i>
+                    </div>
+                    <div class="stat-card-content">
+                        <p class="stat-card-label">Total Expenses</p>
+                        <h3 class="stat-card-value" style="color:var(--primary)">${{ number_format($yearlyTotal, 2) }}</h3>
+                        <span class="stat-card-change {{ $monthlyChange >= 0 ? 'up' : 'down' }}">
+                            <i data-lucide="{{ $monthlyChange >= 0 ? 'trending-up' : 'trending-down' }}" style="width:14px;height:14px"></i>
+                            {{ number_format(abs($monthlyChange), 1) }}% vs last month
+                        </span>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-6 col-md-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="bg-success bg-opacity-10 p-2 rounded">
-                            <i class="bi bi-graph-up fs-4 text-success"></i>
-                        </div>
-                        <div class="min-w-0">
-                            <p class="text-muted small mb-0">This Month</p>
-                            <h4 class="fw-bold mb-0 text-success">${{ number_format($monthlyTotal, 2) }}</h4>
-                            <small class="text-muted">{{ $monthlyCount }} transaction{{ $monthlyCount !== 1 ? 's' : '' }}</small>
-                        </div>
+
+        <div class="card-premium hover-lift">
+            <div class="card-body">
+                <div class="stat-card">
+                    <div class="stat-card-icon" style="background:rgba(99,102,241,0.12);color:var(--secondary)">
+                        <i data-lucide="calendar"></i>
+                    </div>
+                    <div class="stat-card-content">
+                        <p class="stat-card-label">Monthly Spending</p>
+                        <h3 class="stat-card-value" style="color:var(--secondary)">${{ number_format($monthlyTotal, 2) }}</h3>
+                        <span class="stat-card-change neutral">{{ $monthlyCount }} transactions</span>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-6 col-md-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="bg-warning bg-opacity-10 p-2 rounded">
-                            <i class="bi bi-currency-dollar fs-4 text-warning"></i>
-                        </div>
-                        <div class="min-w-0">
-                            <p class="text-muted small mb-0">This Year</p>
-                            <h4 class="fw-bold mb-0 text-warning">${{ number_format($yearlyTotal, 2) }}</h4>
-                            <small class="text-muted">{{ $yearlyCount }} transaction{{ $yearlyCount !== 1 ? 's' : '' }}</small>
-                        </div>
+
+        <div class="card-premium hover-lift">
+            <div class="card-body">
+                <div class="stat-card">
+                    <div class="stat-card-icon" style="background:var(--warning-subtle);color:var(--warning)">
+                        <i data-lucide="trending-up"></i>
+                    </div>
+                    <div class="stat-card-content">
+                        <p class="stat-card-label">Highest Category</p>
+                        <h3 class="stat-card-value" style="color:var(--warning)">${{ number_format($highestCatTotal, 2) }}</h3>
+                        <span class="stat-card-change neutral">{{ $highestCatName }}</span>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-6 col-md-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="bg-danger bg-opacity-10 p-2 rounded">
-                            <i class="bi bi-arrow-up-circle fs-4 text-danger"></i>
-                        </div>
-                        <div class="min-w-0">
-                            <p class="text-muted small mb-0">Highest</p>
-                            <h4 class="fw-bold mb-0 text-danger">${{ $highestExpense ? number_format($highestExpense->amount, 2) : '0.00' }}</h4>
-                            <small class="text-muted">{{ $topCategory ? $topCategory : 'N/A' }}</small>
-                        </div>
+
+        <div class="card-premium hover-lift">
+            <div class="card-body">
+                <div class="stat-card">
+                    <div class="stat-card-icon" style="background:var(--success-subtle);color:var(--success)">
+                        <i data-lucide="bot"></i>
+                    </div>
+                    <div class="stat-card-content">
+                        <p class="stat-card-label">AI Categorized</p>
+                        <h3 class="stat-card-value" style="color:var(--success)">{{ $expenseCount }}</h3>
+                        <span class="stat-card-change neutral">All expenses classified</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-premium hover-lift">
+            <div class="card-body">
+                <div class="stat-card">
+                    <div class="stat-card-icon" style="background:rgba(168,85,247,0.12);color:var(--accent)">
+                        <i data-lucide="repeat"></i>
+                    </div>
+                    <div class="stat-card-content">
+                        <p class="stat-card-label">Recurring</p>
+                        <h3 class="stat-card-value" style="color:var(--accent)">{{ $recurringCount }}</h3>
+                        <span class="stat-card-change neutral">Active subscriptions</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-premium hover-lift">
+            <div class="card-body">
+                <div class="stat-card">
+                    <div class="stat-card-icon" style="background:var(--danger-subtle);color:var(--danger)">
+                        <i data-lucide="clock"></i>
+                    </div>
+                    <div class="stat-card-content">
+                        <p class="stat-card-label">Latest Today</p>
+                        <h3 class="stat-card-value" style="color:var(--danger)">${{ number_format($todayTotal, 2) }}</h3>
+                        <span class="stat-card-change neutral">{{ $todayCount }} transactions</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row g-3 mb-4">
-        <div class="col-md-8">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center py-3">
-                    <h6 class="fw-semibold mb-0"><i class="bi bi-bar-chart-line me-1"></i> Monthly Spending</h6>
-                    <span class="badge bg-primary">{{ now()->year }}</span>
+    <div class="dashboard-charts-top fade-in-up stagger-3" style="margin-top:24px">
+        <div class="card-premium">
+            <div class="card-header">
+                <div class="widget-header" style="margin-bottom:0">
+                    <h5 class="widget-title">
+                        <i data-lucide="bar-chart-3"></i>
+                        Monthly Spending — {{ now()->year }}
+                    </h5>
+                    <a href="{{ route('expenses.index') }}" class="widget-action">View all</a>
                 </div>
-                <div class="card-body">
-                    <canvas id="monthlyChart" height="220"></canvas>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="height:280px">
+                    <canvas id="monthlyChart"></canvas>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center py-3">
-                    <h6 class="fw-semibold mb-0"><i class="bi bi-pie-chart me-1"></i> Categories</h6>
-                    <span class="badge bg-secondary">{{ $categoryDistribution->count() }}</span>
+
+        <div class="card-premium">
+            <div class="card-header">
+                <div class="widget-header" style="margin-bottom:0">
+                    <h5 class="widget-title">
+                        <i data-lucide="pie-chart"></i>
+                        Category Distribution
+                    </h5>
                 </div>
-                <div class="card-body d-flex align-items-center">
-                    <canvas id="categoryChart" height="220"></canvas>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="height:280px;display:flex;align-items:center;justify-content:center">
+                    <canvas id="categoryChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row g-3 mb-4">
-        <div class="col-md-5">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white border-bottom py-3">
-                    <h6 class="fw-semibold mb-0"><i class="bi bi-trophy me-1"></i> Top Categories</h6>
+    <div class="dashboard-widgets fade-in-up stagger-4" style="margin-top:24px">
+        <div class="card-premium">
+            <div class="card-header">
+                <div class="widget-header" style="margin-bottom:0">
+                    <h5 class="widget-title">
+                        <i data-lucide="list"></i>
+                        Top Categories
+                    </h5>
                 </div>
-                <div class="card-body">
-                    @if ($categoryDistribution->isNotEmpty())
-                        @php $grandTotal = $categoryDistribution->sum('total'); @endphp
-                        @foreach ($categoryDistribution->take(8) as $cat)
-                            @php $pct = $grandTotal > 0 ? ($cat->total / $grandTotal) * 100 : 0; @endphp
-                            <div class="mb-3">
-                                <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <span class="small fw-medium">{{ $cat->category }}</span>
-                                    <span class="small text-muted">${{ number_format($cat->total, 2) }} ({{ number_format($pct, 1) }}%)</span>
-                                </div>
-                                <div class="progress" style="height: 6px;">
-                                    <div class="progress-bar bg-{{ ['primary', 'success', 'warning', 'danger', 'info', 'dark', 'secondary', 'primary'][$loop->index % 8] }}"
-                                         role="progressbar"
-                                         style="width: {{ $pct }}%"
-                                         aria-valuenow="{{ $pct }}" aria-valuemin="0" aria-valuemax="100">
-                                    </div>
+            </div>
+            <div class="card-body">
+                @if ($categoryDistribution->isNotEmpty())
+                    @php $grandTotal = $categoryDistribution->sum('total'); @endphp
+                    @foreach ($categoryDistribution->take(6) as $cat)
+                        @php $pct = $grandTotal > 0 ? ($cat->total / $grandTotal) * 100 : 0; @endphp
+                        <div style="margin-bottom:16px">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+                                <span style="font-size:13px;font-weight:600;color:var(--text)">{{ $cat->category }}</span>
+                                <span style="font-size:12px;color:var(--text-dim)">${{ number_format($cat->total, 2) }} · {{ number_format($pct, 1) }}%</span>
+                            </div>
+                            <div class="progress-premium">
+                                <div class="progress-bar"
+                                     style="width:{{ $pct }}%;background:{{ ['#8B5CF6','#6366F1','#A855F7','#22C55E','#F59E0B','#EF4444','#3B82F6','#EC4899'][$loop->index % 8] }}">
                                 </div>
                             </div>
+                        </div>
+                    @endforeach
+                    @if ($categoryDistribution->count() > 6)
+                        <div style="text-align:center;margin-top:8px">
+                            <small style="color:var(--text-dim)">+{{ $categoryDistribution->count() - 6 }} more categories</small>
+                        </div>
+                    @endif
+                @else
+                    <div class="empty-state">
+                        <div class="empty-state-icon"><i data-lucide="folder-open"></i></div>
+                        <p class="empty-state-title">No categories yet</p>
+                        <p class="empty-state-text">Start adding expenses to see your category breakdown</p>
+                        <a href="{{ route('expenses.create') }}" class="btn-premium btn-primary">Add Expense</a>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        <div class="card-premium">
+            <div class="card-header">
+                <div class="widget-header" style="margin-bottom:0">
+                    <h5 class="widget-title">
+                        <i data-lucide="clock"></i>
+                        Recent Transactions
+                    </h5>
+                    <a href="{{ route('expenses.index') }}" class="widget-action">View all</a>
+                </div>
+            </div>
+            <div class="card-body" style="padding:0">
+                @if ($recentExpenses->isNotEmpty())
+                    <div style="padding:0">
+                        @foreach ($recentExpenses as $expense)
+                            <a href="{{ route('expenses.show', $expense) }}" style="display:flex;align-items:center;gap:12px;padding:14px 20px;text-decoration:none;transition:background var(--transition-fast);border-bottom:1px solid var(--border-light)">
+                                <div style="width:36px;height:36px;border-radius:10px;background:var(--bg-hover);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--text-dim)">
+                                    @switch($expense->category)
+                                        @case('Food & Dining')<i data-lucide="utensils" style="width:16px;height:16px"></i>@break
+                                        @case('Shopping')<i data-lucide="shopping-bag" style="width:16px;height:16px"></i>@break
+                                        @case('Transport')<i data-lucide="car" style="width:16px;height:16px"></i>@break
+                                        @case('Groceries')<i data-lucide="shopping-cart" style="width:16px;height:16px"></i>@break
+                                        @case('Bills')<i data-lucide="file-text" style="width:16px;height:16px"></i>@break
+                                        @case('Utilities')<i data-lucide="zap" style="width:16px;height:16px"></i>@break
+                                        @case('Healthcare')<i data-lucide="heart-pulse" style="width:16px;height:16px"></i>@break
+                                        @case('Entertainment')<i data-lucide="film" style="width:16px;height:16px"></i>@break
+                                        @case('Subscription')<i data-lucide="repeat" style="width:16px;height:16px"></i>@break
+                                        @case('Travel')<i data-lucide="plane" style="width:16px;height:16px"></i>@break
+                                        @default<i data-lucide="circle-dollar" style="width:16px;height:16px"></i>
+                                    @endswitch
+                                </div>
+                                <div style="flex:1;min-width:0">
+                                    <div style="font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ Str::limit($expense->description, 35) }}</div>
+                                    <div style="font-size:12px;color:var(--text-dim);display:flex;align-items:center;gap:8px">
+                                        <span>{{ $expense->expense_date->format('M d, Y') }}</span>
+                                        @if ($expense->merchant)
+                                            <span>·</span>
+                                            <span>{{ $expense->merchant }}</span>
+                                        @endif
+                                        @if ($expense->is_recurring)
+                                            <span class="recurring-badge" style="font-size:10px">Recurring</span>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div style="text-align:right;flex-shrink:0">
+                                    <div style="font-size:15px;font-weight:700;color:var(--text)">${{ number_format($expense->amount, 2) }}</div>
+                                    <span class="badge-premium category" style="font-size:10px">{{ $expense->category }}</span>
+                                </div>
+                            </a>
                         @endforeach
-                        @if ($categoryDistribution->count() > 8)
-                            <div class="text-center mt-2">
-                                <small class="text-muted">+{{ $categoryDistribution->count() - 8 }} more categories</small>
-                            </div>
-                        @endif
-                    @else
-                        <p class="text-muted small text-center py-4 mb-0">No expenses yet</p>
-                    @endif
-                </div>
+                    </div>
+                @else
+                    <div class="empty-state">
+                        <div class="empty-state-icon"><i data-lucide="receipt"></i></div>
+                        <p class="empty-state-title">No transactions yet</p>
+                        <p class="empty-state-text">Add your first expense to get started</p>
+                        <a href="{{ route('expenses.create') }}" class="btn-premium btn-primary">Add Expense</a>
+                    </div>
+                @endif
             </div>
         </div>
-        <div class="col-md-7">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white border-bottom py-3">
-                    <h6 class="fw-semibold mb-0"><i class="bi bi-calendar3 me-1"></i> {{ now()->format('F') }} Summary</h6>
+    </div>
+
+    <div class="dashboard-bottom fade-in-up stagger-5" style="margin-top:24px">
+        <div class="card-premium">
+            <div class="card-header">
+                <div class="widget-header" style="margin-bottom:0">
+                    <h5 class="widget-title">
+                        <i data-lucide="calendar"></i>
+                        {{ now()->format('F') }} Summary
+                    </h5>
                 </div>
-                <div class="card-body">
-                    @php
-                        $daysInMonth = now()->daysInMonth;
-                        $today = now()->day;
-                        $avgPerDay = $today > 0 ? $monthlyTotal / $today : 0;
-                        $projectedTotal = $avgPerDay * $daysInMonth;
-                    @endphp
-                    <div class="row g-3 mb-3">
-                        <div class="col-4 text-center border-end">
-                            <p class="text-muted small mb-0">Monthly Total</p>
-                            <h5 class="fw-bold mb-0 text-success">${{ number_format($monthlyTotal, 2) }}</h5>
+            </div>
+            <div class="card-body">
+                @php
+                    $daysInMonth = now()->daysInMonth;
+                    $today = now()->day;
+                    $avgPerDay = $today > 0 ? $monthlyTotal / $today : 0;
+                    $projectedTotal = $avgPerDay * $daysInMonth;
+                @endphp
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px">
+                    <div style="text-align:center;padding:12px;background:var(--bg-hover);border-radius:12px">
+                        <p style="font-size:11px;color:var(--text-dim);margin:0 0 4px;font-weight:500">Monthly Total</p>
+                        <h4 style="color:var(--success);margin:0;font-size:20px">${{ number_format($monthlyTotal, 2) }}</h4>
+                    </div>
+                    <div style="text-align:center;padding:12px;background:var(--bg-hover);border-radius:12px">
+                        <p style="font-size:11px;color:var(--text-dim);margin:0 0 4px;font-weight:500">Daily Avg</p>
+                        <h4 style="color:var(--secondary);margin:0;font-size:20px">${{ number_format($avgPerDay, 2) }}</h4>
+                    </div>
+                    <div style="text-align:center;padding:12px;background:var(--bg-hover);border-radius:12px">
+                        <p style="font-size:11px;color:var(--text-dim);margin:0 0 4px;font-weight:500">Projected</p>
+                        <h4 style="color:var(--warning);margin:0;font-size:20px">${{ number_format($projectedTotal, 2) }}</h4>
+                    </div>
+                    <div style="text-align:center;padding:12px;background:var(--bg-hover);border-radius:12px">
+                        <p style="font-size:11px;color:var(--text-dim);margin:0 0 4px;font-weight:500">Budget Used</p>
+                        <h4 style="color:var(--accent);margin:0;font-size:20px">{{ $today > 0 ? number_format(($today / $daysInMonth) * 100, 0) : 0 }}%</h4>
+                    </div>
+                </div>
+
+                @if ($dailyBreakdown->isNotEmpty())
+                    <div>
+                        <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+                            <span style="font-size:12px;color:var(--text-dim);font-weight:500">Daily spending activity</span>
+                            <span style="font-size:12px;color:var(--text-dim)">{{ $today }} of {{ $daysInMonth }} days</span>
                         </div>
-                        <div class="col-4 text-center border-end">
-                            <p class="text-muted small mb-0">Daily Avg</p>
-                            <h5 class="fw-bold mb-0 text-info">${{ number_format($avgPerDay, 2) }}</h5>
-                        </div>
-                        <div class="col-4 text-center">
-                            <p class="text-muted small mb-0">Projected</p>
-                            <h5 class="fw-bold mb-0 text-warning">${{ number_format($projectedTotal, 2) }}</h5>
+                        <div style="display:flex;align-items:flex-end;gap:3px;height:80px">
+                            @php $maxDaily = $dailyBreakdown->max('total') ?: 1; @endphp
+                            @foreach ($dailyBreakdown as $day)
+                                @php
+                                    $h = max(4, ($day->total / $maxDaily) * 72);
+                                    $isToday = $day->date == today()->toDateString();
+                                @endphp
+                                <div style="flex:1;text-align:center;position:relative" title="{{ \Carbon\Carbon::parse($day->date)->format('M d') }}: ${{ number_format($day->total, 2) }}">
+                                    <div style="height:{{ $h }}px;width:100%;border-radius:4px 4px 0 0;background:{{ $isToday ? 'linear-gradient(180deg,var(--primary),var(--accent))' : 'var(--bg-hover)' }};transition:background var(--transition-fast);min-height:4px"></div>
+                                    <small style="font-size:8px;color:var(--text-dim);display:block;margin-top:2px">{{ \Carbon\Carbon::parse($day->date)->format('d') }}</small>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
-
-                    @if ($dailyBreakdown->isNotEmpty())
-                        <div class="mt-3">
-                            <div class="d-flex justify-content-between small text-muted mb-1">
-                                <span>Daily spending this month</span>
-                                <span>Week {{ (int) ceil($today / 7) }} of {{ (int) ceil($daysInMonth / 7) }}</span>
-                            </div>
-                            <div class="d-flex align-items-end gap-1" style="height: 60px;">
-                                @php
-                                    $maxDaily = $dailyBreakdown->max('total') ?: 1;
-                                @endphp
-                                @foreach ($dailyBreakdown as $day)
-                                    @php
-                                        $h = max(4, ($day->total / $maxDaily) * 56);
-                                        $isToday = $day->date == today()->toDateString();
-                                    @endphp
-                                    <div class="flex-grow-1 text-center" title="{{ \Carbon\Carbon::parse($day->date)->format('M d') }}: ${{ number_format($day->total, 2) }}">
-                                        <div class="rounded-1 mx-auto {{ $isToday ? 'bg-primary' : 'bg-primary bg-opacity-25' }}"
-                                             style="height: {{ $h }}px; width: 100%;"></div>
-                                        <small class="text-muted" style="font-size: 9px;">
-                                            {{ \Carbon\Carbon::parse($day->date)->format('d') }}
-                                        </small>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    @else
-                        <p class="text-muted small text-center py-4 mb-0">No expenses this month</p>
-                    @endif
-                </div>
+                @else
+                    <div class="empty-state" style="padding:24px">
+                        <p style="color:var(--text-dim);font-size:13px;margin:0">No expenses this month</p>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
 
-    <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center py-3">
-            <h6 class="fw-semibold mb-0"><i class="bi bi-clock-history me-1"></i> Recent Expenses</h6>
-            <a href="{{ route('expenses.index') }}" class="btn btn-sm btn-outline-primary">View All</a>
-        </div>
-        <div class="card-body p-0">
-            @if ($recentExpenses->isNotEmpty())
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light small">
-                            <tr>
-                                <th>Date</th>
-                                <th>Description</th>
-                                <th>Category</th>
-                                <th>Merchant</th>
-                                <th class="text-end">Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($recentExpenses as $expense)
-                                <tr>
-                                    <td class="text-nowrap small">{{ $expense->expense_date->format('M d, Y') }}</td>
-                                    <td>
-                                        <a href="{{ route('expenses.show', $expense) }}" class="text-decoration-none fw-medium">
-                                            {{ Str::limit($expense->description, 45) }}
-                                        </a>
-                                    </td>
-                                    <td><span class="badge bg-secondary bg-opacity-75">{{ $expense->category }}</span></td>
-                                    <td class="small">{{ $expense->merchant ?? '-' }}</td>
-                                    <td class="text-end fw-semibold">${{ number_format($expense->amount, 2) }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            @else
-                <div class="text-center py-5 text-muted">
-                    <i class="bi bi-inbox fs-3 d-block mb-2"></i>
-                    <p class="mb-2">No expenses recorded yet</p>
-                    <a href="{{ route('expenses.create') }}" class="btn btn-primary btn-sm">
-                        <i class="bi bi-plus-lg"></i> Add Your First Expense
-                    </a>
-                </div>
-            @endif
-        </div>
-    </div>
-</x-app-layout>
+    @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        Chart.defaults.color = '#94A3B8';
+        Chart.defaults.borderColor = 'rgba(255,255,255,0.08)';
 
-@push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const monthlyData = @json($monthlySpending);
-    const categoryData = @json($categoryDistribution);
+        const monthlyData = @json($monthlySpending);
+        const categoryData = @json($categoryDistribution);
 
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const monthlyValues = new Array(12).fill(0);
-    monthlyData.forEach(function (d) {
-        monthlyValues[d.month - 1] = parseFloat(d.total);
-    });
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const monthlyValues = new Array(12).fill(0);
+        monthlyData.forEach(function (d) { monthlyValues[d.month - 1] = parseFloat(d.total); });
 
-    const barCtx = document.getElementById('monthlyChart').getContext('2d');
-    const gradient = barCtx.createLinearGradient(0, 0, 0, 220);
-    gradient.addColorStop(0, 'rgba(13, 110, 253, 0.7)');
-    gradient.addColorStop(1, 'rgba(13, 110, 253, 0.1)');
+        const barCtx = document.getElementById('monthlyChart').getContext('2d');
+        const gradient = barCtx.createLinearGradient(0, 0, 0, 280);
+        gradient.addColorStop(0, 'rgba(139, 92, 246, 0.6)');
+        gradient.addColorStop(1, 'rgba(139, 92, 246, 0.05)');
 
-    new Chart(barCtx, {
-        type: 'bar',
-        data: {
-            labels: months,
-            datasets: [{
-                label: 'Spending',
-                data: monthlyValues,
-                backgroundColor: gradient,
-                borderColor: '#0d6efd',
-                borderWidth: 1,
-                borderRadius: 4,
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    callbacks: {
-                        label: function (ctx) {
-                            return '$' + parseFloat(ctx.raw).toLocaleString('en-US', { minimumFractionDigits: 2 });
-                        }
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function (v) { return '$' + v; }
-                    }
-                }
-            }
-        }
-    });
-
-    const colors = ['#0d6efd', '#198754', '#ffc107', '#dc3545', '#6f42c1', '#fd7e14', '#20c997', '#0dcaf0', '#d63384', '#6610f2', '#f5365c', '#2dce89', '#fb6340', '#172b4d', '#5e72e4', '#8898aa'];
-
-    if (categoryData.length > 0) {
-        new Chart(document.getElementById('categoryChart'), {
-            type: 'doughnut',
+        new Chart(barCtx, {
+            type: 'bar',
             data: {
-                labels: categoryData.map(function (d) {
-                    return d.category + ' (' + new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(d.total) + ')';
-                }),
+                labels: months,
                 datasets: [{
-                    data: categoryData.map(function (d) { return parseFloat(d.total); }),
-                    backgroundColor: colors.slice(0, categoryData.length),
-                    borderWidth: 2,
-                    borderColor: '#fff',
+                    label: 'Spending',
+                    data: monthlyValues,
+                    backgroundColor: gradient,
+                    borderColor: '#8B5CF6',
+                    borderWidth: 1,
+                    borderRadius: 6,
+                    borderSkipped: false,
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                cutout: '65%',
                 plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: { boxWidth: 10, padding: 6, font: { size: 10 } }
-                    },
+                    legend: { display: false },
                     tooltip: {
+                        backgroundColor: '#1f1f23',
+                        titleColor: '#F8FAFC',
+                        bodyColor: '#94A3B8',
+                        borderColor: 'rgba(255,255,255,0.08)',
+                        borderWidth: 1,
+                        padding: 12,
+                        cornerRadius: 8,
                         callbacks: {
                             label: function (ctx) {
-                                var total = ctx.dataset.data.reduce(function (a, b) { return a + b; }, 0);
-                                var pct = ((ctx.raw / total) * 100).toFixed(1);
-                                return ctx.label + ' (' + pct + '%)';
+                                return '$' + parseFloat(ctx.raw).toLocaleString('en-US', { minimumFractionDigits: 2 });
                             }
                         }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(255,255,255,0.04)' },
+                        ticks: { callback: function (v) { return '$' + v; } }
+                    },
+                    x: {
+                        grid: { display: false }
                     }
                 }
             }
         });
-    } else {
-        document.getElementById('categoryChart').parentElement.innerHTML = '<p class="text-muted small text-center w-100 mb-0">No data</p>';
-    }
-});
-</script>
-@endpush
+
+        const colors = ['#8B5CF6','#6366F1','#A855F7','#22C55E','#F59E0B','#EF4444','#3B82F6','#EC4899','#14B8A6','#F97316'];
+
+        if (categoryData.length > 0) {
+            new Chart(document.getElementById('categoryChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: categoryData.map(function (d) {
+                        return d.category + ' ($' + new Intl.NumberFormat('en-US', { minimumFractionDigits: 0 }).format(d.total) + ')';
+                    }),
+                    datasets: [{
+                        data: categoryData.map(function (d) { return parseFloat(d.total); }),
+                        backgroundColor: colors.slice(0, categoryData.length),
+                        borderWidth: 0,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#94A3B8',
+                                boxWidth: 8,
+                                padding: 8,
+                                font: { size: 11 }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#1f1f23',
+                            titleColor: '#F8FAFC',
+                            bodyColor: '#94A3B8',
+                            borderColor: 'rgba(255,255,255,0.08)',
+                            borderWidth: 1,
+                            padding: 12,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: function (ctx) {
+                                    var total = ctx.dataset.data.reduce(function (a, b) { return a + b; }, 0);
+                                    var pct = ((ctx.raw / total) * 100).toFixed(1);
+                                    return ctx.label + ' (' + pct + '%)';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        } else {
+            document.getElementById('categoryChart').parentElement.innerHTML = '<p style="color:var(--text-dim);font-size:13px;text-align:center">No data</p>';
+        }
+    });
+    </script>
+    @endpush
+</x-app-layout>

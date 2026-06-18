@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreExpenseRequest;
 use App\Http\Requests\UpdateExpenseRequest;
-use App\Jobs\ProcessAIClassification;
 use App\Models\Expense;
+use App\Services\AI\AIManager;
 use App\Services\ExpenseService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,7 +14,8 @@ use Illuminate\View\View;
 class ExpenseController extends Controller
 {
     public function __construct(
-        private readonly ExpenseService $expenseService
+        private readonly ExpenseService $expenseService,
+        private readonly AIManager $aiManager
     ) {}
 
     public function index(Request $request): View
@@ -38,10 +39,23 @@ class ExpenseController extends Controller
 
         $expense = $this->expenseService->create($data);
 
-        ProcessAIClassification::dispatch($expense);
+        try {
+            $result = $this->aiManager->classify($expense->description);
+            $expense->update([
+                'category' => $result['category'],
+                'merchant' => $result['merchant'],
+                'ai_confidence' => $result['confidence'],
+                'is_recurring' => $result['is_recurring'],
+            ]);
+        } catch (\Throwable $e) {
+            $expense->update([
+                'category' => config('ai.classifier.default_category', 'Other'),
+                'ai_confidence' => config('ai.classifier.fallback_confidence', 0),
+            ]);
+        }
 
         return to_route('expenses.show', $expense)
-            ->with('success', 'Expense saved successfully. AI is analyzing it now.');
+            ->with('success', 'Expense saved and categorized by AI.');
     }
 
     public function show(Request $request, Expense $expense): View
@@ -68,7 +82,10 @@ class ExpenseController extends Controller
             abort(403);
         }
 
-        $this->expenseService->update($expense, $request->validated());
+        $data = $request->validated();
+        $data['category'] = $data['category'] ?? $expense->category;
+
+        $this->expenseService->update($expense, $data);
 
         return to_route('expenses.index')
             ->with('success', 'Expense updated successfully.');

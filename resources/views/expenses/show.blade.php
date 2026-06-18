@@ -1,210 +1,184 @@
 <x-app-layout>
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h4 class="mb-1">Expense Details</h4>
-            <p class="text-muted small mb-0">{{ $expense->expense_date->format('l, F j, Y') }}</p>
-        </div>
-        <div class="d-flex gap-2">
-            <a href="{{ route('expenses.edit', $expense) }}" class="btn btn-primary">
-                <i class="bi bi-pencil"></i> Edit
-            </a>
-            <a href="{{ route('expenses.index') }}" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left"></i> Back
-            </a>
+    <div class="page-header fade-in">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+                <h1 class="page-title">Expense Details</h1>
+                <p class="page-subtitle">{{ $expense->expense_date->format('l, F j, Y') }}</p>
+            </div>
+            <div style="display:flex;gap:8px">
+                <a href="{{ route('expenses.edit', $expense) }}" class="btn-premium btn-primary">
+                    <i data-lucide="pencil"></i>
+                    Edit
+                </a>
+                <a href="{{ route('expenses.index') }}" class="btn-premium btn-secondary">
+                    <i data-lucide="arrow-left"></i>
+                    Back
+                </a>
+            </div>
         </div>
     </div>
 
-    @if ($expense->ai_confidence === null)
-        <div class="alert alert-info border-0 shadow-sm d-flex align-items-center gap-3 mb-4" id="aiPendingAlert">
-            <div class="spinner-border text-primary" role="status" style="width: 1.25rem; height: 1.25rem;"></div>
-            <div>
-                <strong>AI is analyzing your expense...</strong>
-                <p class="mb-0 small">Category, merchant, and recurring status will be detected automatically.</p>
-            </div>
+    @if ($expense->ai_confidence !== null && $expense->ai_confidence < 0.5)
+        <div class="alert-premium alert-error fade-in">
+            <i data-lucide="alert-triangle" style="width:18px;height:18px;flex-shrink:0"></i>
+            <span>Low AI Confidence ({{ number_format($expense->ai_confidence * 100, 0) }}%). <a href="{{ route('expenses.edit', $expense) }}" style="color:var(--danger);font-weight:600">Edit manually</a></span>
         </div>
-    @elseif ($expense->ai_confidence < 0.5)
-        <div class="alert alert-warning border-0 shadow-sm d-flex align-items-center gap-3 mb-4">
-            <i class="bi bi-exclamation-triangle fs-4 text-warning"></i>
-            <div>
-                <strong>Low AI Confidence</strong>
-                <p class="mb-0 small">AI couldn't confidently categorize this expense. <a href="{{ route('expenses.edit', $expense) }}">Edit it manually</a>.</p>
-            </div>
-        </div>
-    @else
-        <div class="alert alert-success border-0 shadow-sm d-flex align-items-center gap-3 mb-4">
-            <i class="bi bi-check-circle-fill fs-4 text-success"></i>
-            <div>
-                <strong>AI Categorized</strong>
-                <p class="mb-0 small">Detected as <strong>{{ $expense->category }}</strong>
-                    @if ($expense->merchant) from <strong>{{ $expense->merchant }}</strong> @endif
-                    with {{ number_format($expense->ai_confidence * 100, 0) }}% confidence.</p>
-            </div>
+    @elseif ($expense->ai_confidence !== null && $expense->ai_confidence >= 0.5)
+        <div class="alert-premium alert-success fade-in">
+            <i data-lucide="check-circle" style="width:18px;height:18px;flex-shrink:0"></i>
+            <span>AI Categorized as <strong>{{ $expense->category }}</strong>
+                @if ($expense->merchant) from <strong>{{ $expense->merchant }}</strong> @endif
+                with {{ number_format($expense->ai_confidence * 100, 0) }}% confidence.</span>
         </div>
     @endif
 
-    <div class="row g-4">
-        <div class="col-lg-8">
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-start mb-4">
+    <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:24px" class="fade-in-up">
+        <div>
+            <div class="card-premium">
+                <div class="card-body">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px">
                         <div>
-                            <h1 class="display-5 fw-bold mb-1">${{ number_format($expense->amount, 2) }}</h1>
-                            <p class="text-muted mb-0">
-                                <i class="bi bi-calendar me-1"></i> {{ $expense->expense_date->format('F d, Y') }}
-                                <span class="mx-2">|</span>
-                                <i class="bi bi-credit-card me-1"></i> {{ $expense->payment_method }}
+                            <h1 style="font-size:42px;font-weight:800;letter-spacing:-0.03em;margin:0 0 4px;background:linear-gradient(135deg,var(--text),var(--text-muted));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">
+                                ${{ number_format($expense->amount, 2) }}
+                            </h1>
+                            <p style="color:var(--text-muted);font-size:14px;margin:0;display:flex;align-items:center;gap:12px">
+                                <span style="display:flex;align-items:center;gap:4px"><i data-lucide="calendar" style="width:14px;height:14px"></i> {{ $expense->expense_date->format('F d, Y') }}</span>
+                                <span style="display:flex;align-items:center;gap:4px"><i data-lucide="credit-card" style="width:14px;height:14px"></i> {{ $expense->payment_method }}</span>
                             </p>
                         </div>
-                        <div>
-                            @if ($expense->ai_confidence !== null)
-                                <span class="badge bg-{{ $expense->category !== 'Other' ? 'success' : 'secondary' }} fs-6 px-3 py-2">
-                                    @switch($expense->category)
-                                        @case('Food & Dining') 🍔 @break
-                                        @case('Shopping') 🛍️ @break
-                                        @case('Transport') 🚗 @break
-                                        @case('Fuel') ⛽ @break
-                                        @case('Groceries') 🛒 @break
-                                        @case('Bills') 📄 @break
-                                        @case('Utilities') 💡 @break
-                                        @case('Healthcare') 🏥 @break
-                                        @case('Education') 📚 @break
-                                        @case('Entertainment') 🎬 @break
-                                        @case('Travel') ✈️ @break
-                                        @case('Rent') 🏠 @break
-                                        @case('Investment') 📈 @break
-                                        @case('Salary') 💰 @break
-                                        @case('Subscription') 🔄 @break
-                                        @default 🤖
-                                    @endswitch
-                                    {{ $expense->category }}
-                                </span>
-                            @else
-                                <span class="badge bg-info fs-6 px-3 py-2">
-                                    <i class="bi bi-robot me-1"></i> Analyzing...
-                                </span>
-                            @endif
+                        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+                            <span class="badge-premium category" style="font-size:14px;padding:6px 16px">
+                                @switch($expense->category)
+                                    @case('Food & Dining')<i data-lucide="utensils" style="width:16px;height:16px"></i>@break
+                                    @case('Shopping')<i data-lucide="shopping-bag" style="width:16px;height:16px"></i>@break
+                                    @case('Transport')<i data-lucide="car" style="width:16px;height:16px"></i>@break
+                                    @case('Fuel')<i data-lucide="fuel" style="width:16px;height:16px"></i>@break
+                                    @case('Groceries')<i data-lucide="shopping-cart" style="width:16px;height:16px"></i>@break
+                                    @case('Bills')<i data-lucide="file-text" style="width:16px;height:16px"></i>@break
+                                    @case('Utilities')<i data-lucide="zap" style="width:16px;height:16px"></i>@break
+                                    @case('Healthcare')<i data-lucide="heart-pulse" style="width:16px;height:16px"></i>@break
+                                    @case('Education')<i data-lucide="book-open" style="width:16px;height:16px"></i>@break
+                                    @case('Entertainment')<i data-lucide="film" style="width:16px;height:16px"></i>@break
+                                    @case('Travel')<i data-lucide="plane" style="width:16px;height:16px"></i>@break
+                                    @case('Rent')<i data-lucide="home" style="width:16px;height:16px"></i>@break
+                                    @case('Subscription')<i data-lucide="repeat" style="width:16px;height:16px"></i>@break
+                                    @case('Investment')<i data-lucide="trending-up" style="width:16px;height:16px"></i>@break
+                                    @default<i data-lucide="circle-dollar" style="width:16px;height:16px"></i>
+                                @endswitch
+                                {{ $expense->category }}
+                            </span>
                         </div>
                     </div>
 
-                    <div class="mb-4">
-                        <h6 class="fw-semibold text-muted small text-uppercase mb-2">Description</h6>
-                        <p class="fs-5 mb-0">{{ $expense->description }}</p>
+                    <div style="margin-bottom:24px">
+                        <p style="font-size:17px;line-height:1.6;color:var(--text);margin:0">{{ $expense->description }}</p>
                     </div>
 
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-4">
-                            <div class="bg-light rounded-3 p-3">
-                                <small class="text-muted d-block text-uppercase small">Merchant</small>
-                                <strong class="fs-6">
-                                    @if ($expense->merchant)
-                                        {{ $expense->merchant }}
-                                    @elseif ($expense->ai_confidence === null)
-                                        <span class="text-info"><i class="bi bi-robot me-1"></i> Detecting...</span>
-                                    @else
-                                        <span class="text-muted">Not detected</span>
-                                    @endif
-                                </strong>
-                            </div>
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px">
+                        <div style="background:var(--bg-hover);border-radius:12px;padding:14px">
+                            <p style="font-size:11px;color:var(--text-dim);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin:0 0 6px">Merchant</p>
+                            <p style="font-size:15px;font-weight:600;margin:0;color:var(--text)">{{ $expense->merchant ?? 'Not detected' }}</p>
                         </div>
-                        <div class="col-md-4">
-                            <div class="bg-light rounded-3 p-3">
-                                <small class="text-muted d-block text-uppercase small">Payment Method</small>
-                                <strong class="fs-6">{{ $expense->payment_method }}</strong>
-                            </div>
+                        <div style="background:var(--bg-hover);border-radius:12px;padding:14px">
+                            <p style="font-size:11px;color:var(--text-dim);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin:0 0 6px">Payment</p>
+                            <p style="font-size:15px;font-weight:600;margin:0;color:var(--text)">{{ $expense->payment_method }}</p>
                         </div>
-                        <div class="col-md-4">
-                            <div class="bg-light rounded-3 p-3">
-                                <small class="text-muted d-block text-uppercase small">Recurring</small>
-                                <strong class="fs-6">
-                                    @if ($expense->ai_confidence !== null)
-                                        @if ($expense->is_recurring)
-                                            <span class="text-primary"><i class="bi bi-arrow-repeat"></i> Yes</span>
-                                        @else
-                                            No
-                                        @endif
-                                    @else
-                                        <span class="text-info"><i class="bi bi-robot me-1"></i> Detecting...</span>
-                                    @endif
-                                </strong>
-                            </div>
+                        <div style="background:var(--bg-hover);border-radius:12px;padding:14px">
+                            <p style="font-size:11px;color:var(--text-dim);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin:0 0 6px">Recurring</p>
+                            <p style="font-size:15px;font-weight:600;margin:0;color:var(--text)">
+                                @if ($expense->is_recurring)
+                                    <span style="color:var(--accent)"><i data-lucide="repeat" style="width:14px;height:14px;display:inline"></i> Yes</span>
+                                @else
+                                    No
+                                @endif
+                            </p>
                         </div>
                     </div>
 
                     @if ($expense->notes)
                         <div>
-                            <h6 class="fw-semibold text-muted small text-uppercase mb-2">Notes</h6>
-                            <p class="mb-0">{{ $expense->notes }}</p>
+                            <p style="font-size:11px;color:var(--text-dim);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin:0 0 6px">Notes</p>
+                            <p style="font-size:14px;color:var(--text-muted);margin:0;line-height:1.6">{{ $expense->notes }}</p>
                         </div>
                     @endif
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-4">
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-white border-bottom py-3">
-                    <h6 class="fw-semibold mb-0"><i class="bi bi-robot me-1"></i> AI Classification</h6>
-                </div>
+        <div>
+            <div class="card-premium card-gradient" style="margin-bottom:20px">
                 <div class="card-body">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+                        <div style="width:36px;height:36px;border-radius:8px;background:var(--primary-subtle);display:flex;align-items:center;justify-content:center;color:var(--primary)">
+                            <i data-lucide="bot"></i>
+                        </div>
+                        <h5 style="margin:0;font-size:15px">AI Classification</h5>
+                    </div>
+
                     @if ($expense->ai_confidence !== null)
-                        <div class="mb-3">
-                            <small class="text-muted d-block mb-1">Confidence Score</small>
-                            <div class="progress" style="height: 24px;">
-                                <div class="progress-bar rounded-2 {{ $expense->ai_confidence >= 0.8 ? 'bg-success' : ($expense->ai_confidence >= 0.5 ? 'bg-warning text-dark' : 'bg-danger') }}"
-                                     role="progressbar"
-                                     style="width: {{ $expense->ai_confidence * 100 }}%"
-                                     aria-valuenow="{{ $expense->ai_confidence * 100 }}" aria-valuemin="0" aria-valuemax="100">
+                        <div style="margin-bottom:20px">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                                <span style="font-size:12px;color:var(--text-dim);font-weight:500">Confidence Score</span>
+                                <span style="font-size:13px;font-weight:700;color:{{ $expense->ai_confidence >= 0.8 ? 'var(--success)' : ($expense->ai_confidence >= 0.5 ? 'var(--warning)' : 'var(--danger)') }}">
                                     {{ number_format($expense->ai_confidence * 100, 0) }}%
+                                </span>
+                            </div>
+                            <div class="progress-premium" style="height:8px">
+                                <div class="progress-bar"
+                                     style="width:{{ $expense->ai_confidence * 100 }}%;background:{{ $expense->ai_confidence >= 0.8 ? 'var(--success)' : ($expense->ai_confidence >= 0.5 ? 'var(--warning)' : 'var(--danger)') }}">
                                 </div>
                             </div>
                         </div>
-                        <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
-                            <small class="text-muted">Category</small>
-                            <strong>{{ $expense->category }}</strong>
+
+                        <div>
+                            <div class="ai-insight-item">
+                                <span class="ai-insight-label">Category</span>
+                                <span class="ai-insight-value">{{ $expense->category }}</span>
+                            </div>
+                            <div class="ai-insight-item">
+                                <span class="ai-insight-label">Merchant</span>
+                                <span class="ai-insight-value">{{ $expense->merchant ?? 'N/A' }}</span>
+                            </div>
+                            <div class="ai-insight-item">
+                                <span class="ai-insight-label">Recurring</span>
+                                <span class="ai-insight-value">{{ $expense->is_recurring ? 'Yes' : 'No' }}</span>
+                            </div>
+                            <div class="ai-insight-item">
+                                <span class="ai-insight-label">Detected By</span>
+                                <span class="ai-insight-value" style="display:flex;align-items:center;gap:4px">
+                                    <i data-lucide="bot" style="width:14px;height:14px;color:var(--primary)"></i>
+                                    AI
+                                </span>
+                            </div>
                         </div>
-                        <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
-                            <small class="text-muted">Merchant</small>
-                            <strong>{{ $expense->merchant ?? 'N/A' }}</strong>
-                        </div>
-                        <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
-                            <small class="text-muted">Recurring</small>
-                            <strong>{{ $expense->is_recurring ? 'Yes' : 'No' }}</strong>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <small class="text-muted">Detected By</small>
-                            <strong><i class="bi bi-robot text-primary"></i> AI</strong>
-                        </div>
+
                         @if ($expense->ai_confidence < 0.5)
-                            <div class="alert alert-warning py-2 px-3 mt-3 mb-0 small">
-                                <i class="bi bi-exclamation-triangle me-1"></i>
-                                AI confidence is low. <a href="{{ route('expenses.edit', $expense) }}">Review manually</a>.
+                            <div style="background:var(--danger-subtle);border-radius:8px;padding:12px;margin-top:16px;font-size:12px;color:var(--danger);display:flex;align-items:flex-start;gap:8px">
+                                <i data-lucide="alert-triangle" style="width:16px;height:16px;flex-shrink:0;margin-top:1px"></i>
+                                <span>AI confidence is low. <a href="{{ route('expenses.edit', $expense) }}" style="color:var(--danger);font-weight:600">Review manually</a></span>
                             </div>
                         @endif
-                    @else
-                        <div class="text-center py-4" id="aiLoadingState">
-                            <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
-                            <p class="fw-semibold mb-1">AI Analyzing</p>
-                            <p class="text-muted small mb-0">Processing your expense...</p>
-                            <p class="text-muted small mb-0">This should take just a moment.</p>
-                        </div>
                     @endif
                 </div>
             </div>
 
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-bottom py-3">
-                    <h6 class="fw-semibold mb-0"><i class="bi bi-gear me-1"></i> Actions</h6>
-                </div>
+            <div class="card-premium">
                 <div class="card-body">
-                    <div class="d-grid gap-2">
-                        <a href="{{ route('expenses.edit', $expense) }}" class="btn btn-outline-primary">
-                            <i class="bi bi-pencil"></i> Edit Expense
+                    <h5 style="font-size:15px;margin:0 0 16px;display:flex;align-items:center;gap:8px">
+                        <i data-lucide="settings" style="width:16px;height:16px;color:var(--text-muted)"></i>
+                        Actions
+                    </h5>
+                    <div style="display:flex;flex-direction:column;gap:8px">
+                        <a href="{{ route('expenses.edit', $expense) }}" class="btn-premium btn-primary w-100" style="justify-content:center">
+                            <i data-lucide="pencil"></i>
+                            Edit Expense
                         </a>
                         <form method="POST" action="{{ route('expenses.destroy', $expense) }}" onsubmit="return confirm('Delete this expense permanently?')">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-outline-danger w-100">
-                                <i class="bi bi-trash"></i> Delete Expense
+                            <button type="submit" class="btn-premium btn-danger w-100" style="justify-content:center">
+                                <i data-lucide="trash-2"></i>
+                                Delete Expense
                             </button>
                         </form>
                     </div>
@@ -213,7 +187,3 @@
         </div>
     </div>
 </x-app-layout>
-
-@if ($expense->ai_confidence === null)
-<script>setTimeout(function(){ location.reload(true); }, 3000);</script>
-@endif

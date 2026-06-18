@@ -4,18 +4,37 @@ namespace App\Services;
 
 use App\Models\Expense;
 use App\Repositories\ExpenseRepositoryInterface;
+use App\Services\AI\AISearchService;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 class ExpenseService
 {
     public function __construct(
-        private readonly ExpenseRepositoryInterface $expenseRepository
+        private readonly ExpenseRepositoryInterface $expenseRepository,
+        private readonly AISearchService $aiSearchService
     ) {}
 
     public function getPaginated(int $userId, array $filters = []): LengthAwarePaginator
     {
         return $this->expenseRepository->findByUserPaginated($userId, $filters);
+    }
+
+    public function searchByAI(int $userId, string $query): array
+    {
+        $aiFilters = $this->aiSearchService->parse($query);
+
+        if (empty($aiFilters)) {
+            return [
+                'filters' => ['search' => $query],
+                'used_ai' => false,
+            ];
+        }
+
+        return [
+            'filters' => $aiFilters,
+            'used_ai' => true,
+        ];
     }
 
     public function find(int $id): ?Expense
@@ -83,6 +102,10 @@ class ExpenseService
             'monthlySpending' => $this->expenseRepository->getMonthlySpending($userId),
             'categoryDistribution' => $this->expenseRepository->getCategoryDistribution($userId),
             'dailyBreakdown' => $this->expenseRepository->getCurrentMonthDailyBreakdown($userId),
+            'previousMonthTotal' => $this->expenseRepository->getPreviousMonthTotal($userId),
+            'recurringCount' => $this->expenseRepository->getRecurringCount($userId),
+            'expenseCount' => $this->expenseRepository->getExpenseCount($userId),
+            'weeklyTrend' => $this->expenseRepository->getWeeklyTrend($userId),
         ];
     }
 }

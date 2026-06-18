@@ -39,15 +39,32 @@ class ExpenseRepository implements ExpenseRepositoryInterface
             $query->where('payment_method', $filters['payment_method']);
         }
 
-        if (!empty($filters['date_from'])) {
-            $query->whereDate('expense_date', '>=', $filters['date_from']);
+        $dateFrom = $filters['date_from'] ?? $filters['start_date'] ?? null;
+        if (!empty($dateFrom)) {
+            $query->whereDate('expense_date', '>=', $dateFrom);
         }
 
-        if (!empty($filters['date_to'])) {
-            $query->whereDate('expense_date', '<=', $filters['date_to']);
+        $dateTo = $filters['date_to'] ?? $filters['end_date'] ?? null;
+        if (!empty($dateTo)) {
+            $query->whereDate('expense_date', '<=', $dateTo);
         }
 
-        return $query->orderBy('expense_date', 'desc')
+        if (isset($filters['min_amount']) && is_numeric($filters['min_amount'])) {
+            $query->where('amount', '>=', (float) $filters['min_amount']);
+        }
+
+        if (isset($filters['max_amount']) && is_numeric($filters['max_amount'])) {
+            $query->where('amount', '<=', (float) $filters['max_amount']);
+        }
+
+        if (isset($filters['is_recurring'])) {
+            $query->where('is_recurring', filter_var($filters['is_recurring'], FILTER_VALIDATE_BOOLEAN));
+        }
+
+        $sort = $filters['sort'] ?? 'expense_date';
+        $order = $filters['order'] ?? 'desc';
+
+        return $query->orderBy($sort, $order)
             ->orderBy('created_at', 'desc')
             ->paginate(15)
             ->withQueryString();
@@ -160,6 +177,38 @@ class ExpenseRepository implements ExpenseRepositoryInterface
         return Expense::where('user_id', $userId)
             ->whereYear('expense_date', now()->year)
             ->count();
+    }
+
+    public function getPreviousMonthTotal(int $userId): float
+    {
+        $prev = now()->subMonth();
+        return (float) Expense::where('user_id', $userId)
+            ->whereYear('expense_date', $prev->year)
+            ->whereMonth('expense_date', $prev->month)
+            ->sum('amount');
+    }
+
+    public function getRecurringCount(int $userId): int
+    {
+        return Expense::where('user_id', $userId)
+            ->where('is_recurring', true)
+            ->count();
+    }
+
+    public function getExpenseCount(int $userId): int
+    {
+        return Expense::where('user_id', $userId)->count();
+    }
+
+    public function getWeeklyTrend(int $userId): Collection
+    {
+        return Expense::where('user_id', $userId)
+            ->whereYear('expense_date', now()->year)
+            ->whereMonth('expense_date', now()->month)
+            ->selectRaw('WEEK(expense_date, 1) - WEEK(DATE_SUB(expense_date, INTERVAL DAYOFMONTH(expense_date)-1 DAY), 1) + 1 as week, SUM(amount) as total')
+            ->groupBy('week')
+            ->orderBy('week')
+            ->get();
     }
 
     public function getCurrentMonthDailyBreakdown(int $userId): Collection

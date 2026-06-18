@@ -1,7 +1,7 @@
-<form method="POST" action="{{ route('register') }}">
+<form method="POST" action="{{ route('register') }}" class="form-premium">
     @csrf
 
-    <div class="mb-3">
+    <div style="margin-bottom:16px">
         <label for="name" class="form-label">Name</label>
         <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autofocus>
         @error('name')
@@ -9,7 +9,7 @@
         @enderror
     </div>
 
-    <div class="mb-3">
+    <div style="margin-bottom:16px">
         <label for="email" class="form-label">Email</label>
         <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required>
         @error('email')
@@ -17,25 +17,25 @@
         @enderror
     </div>
 
-    <div class="mb-3">
+    <div style="margin-bottom:16px">
         <label for="password" class="form-label">Password</label>
-        <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required>
+        <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
         @error('password')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
     </div>
 
-    <div class="mb-3">
+    <div style="margin-bottom:20px">
         <label for="password_confirmation" class="form-label">Confirm Password</label>
         <input id="password_confirmation" type="password" class="form-control" name="password_confirmation" required>
     </div>
 
-    <div class="d-flex align-items-center justify-content-end">
-        <button type="submit" class="btn btn-primary">Register</button>
+    <div style="display:flex;align-items:center;justify-content:flex-end">
+        <button type="submit" class="btn-premium btn-primary">Create Account</button>
     </div>
 
-    <div class="text-center mt-3">
-        <span class="text-muted small">Already have an account?</span>
-        <a href="{{ route('login') }}" class="text-decoration-none small">Log in</a>
+    <div style="text-align:center;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+        <span style="font-size:13px;color:var(--text-dim)">Already have an account? </span>
+        <a href="{{ route('login') }}" style="font-size:13px;color:var(--primary);text-decoration:none;font-weight:600">Log in</a>
     </div>
 </form>

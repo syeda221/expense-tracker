@@ -42,5 +42,13 @@ interface ExpenseRepositoryInterface
 
     public function getYearlyCount(int $userId): int;
 
+    public function getPreviousMonthTotal(int $userId): float;
+
+    public function getRecurringCount(int $userId): int;
+
+    public function getExpenseCount(int $userId): int;
+
+    public function getWeeklyTrend(int $userId): Collection;
+
     public function getCurrentMonthDailyBreakdown(int $userId): Collection;
 }

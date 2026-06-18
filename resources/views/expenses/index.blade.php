@@ -1,141 +1,114 @@
 <x-app-layout>
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h4 class="mb-1">Expenses</h4>
-            <p class="text-muted small mb-0">{{ $expenses->total() }} total expenses</p>
+    <div class="page-header fade-in">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+                <h1 class="page-title">Expenses</h1>
+                <p class="page-subtitle">{{ $expenses->total() }} total expenses · {{ now()->format('F Y') }}</p>
+            </div>
+            <a href="{{ route('expenses.create') }}" class="btn-premium btn-primary">
+                <i data-lucide="plus"></i>
+                Add Expense
+            </a>
         </div>
-        <a href="{{ route('expenses.create') }}" class="btn btn-primary">
-            <i class="bi bi-plus-lg"></i> Add Expense
-        </a>
     </div>
 
-    <div class="card border-0 shadow-sm mb-4">
+    <div class="card-premium fade-in-up">
         <div class="card-body">
-            <form method="GET" action="{{ route('expenses.index') }}" class="row g-2">
-                <div class="col-md-3">
-                    <input type="text" name="search" class="form-control" placeholder="Search description or merchant..." value="{{ $filters['search'] ?? '' }}">
-                </div>
-                <div class="col-md-2">
-                    <input type="text" name="category" class="form-control" placeholder="Category" value="{{ $filters['category'] ?? '' }}">
-                </div>
-                <div class="col-md-2">
-                    <input type="text" name="payment_method" class="form-control" placeholder="Payment" value="{{ $filters['payment_method'] ?? '' }}">
-                </div>
-                <div class="col-md-2">
-                    <input type="date" name="date_from" class="form-control" value="{{ $filters['date_from'] ?? '' }}" placeholder="From">
-                </div>
-                <div class="col-md-2">
-                    <input type="date" name="date_to" class="form-control" value="{{ $filters['date_to'] ?? '' }}" placeholder="To">
-                </div>
-                <div class="col-md-1">
-                    <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-search"></i></button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div class="card border-0 shadow-sm">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light small">
-                        <tr>
-                            <th>Date</th>
-                            <th>Description</th>
-                            <th>Category</th>
-                            <th>Merchant</th>
-                            <th>Payment</th>
-                            <th class="text-end">Amount</th>
-                            <th class="text-center">AI</th>
-                            <th class="text-end">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($expenses as $expense)
-                            <tr>
-                                <td class="text-nowrap small">{{ $expense->expense_date->format('M d, Y') }}</td>
-                                <td>
-                                    <a href="{{ route('expenses.show', $expense) }}" class="text-decoration-none fw-medium">
-                                        {{ Str::limit($expense->description, 40) }}
-                                    </a>
-                                </td>
-                                <td>
-                                    @if ($expense->ai_confidence !== null)
-                                        <span class="badge bg-{{ $expense->category !== 'Other' ? 'success' : 'secondary' }} bg-opacity-75">
-                                            {{ $expense->category }}
-                                        </span>
-                                    @else
-                                        <span class="badge bg-info bg-opacity-50">
-                                            <i class="bi bi-robot me-1"></i> Analyzing
-                                        </span>
-                                    @endif
-                                </td>
-                                <td class="small">{{ $expense->merchant ?? '-' }}</td>
-                                <td class="small">{{ $expense->payment_method }}</td>
-                                <td class="text-end fw-semibold">${{ number_format($expense->amount, 2) }}</td>
-                                <td class="text-center">
-                                    @if ($expense->ai_confidence !== null)
-                                        @if ($expense->ai_confidence >= 0.8)
-                                            <span class="badge bg-success bg-opacity-10 text-success" title="AI Confidence: {{ number_format($expense->ai_confidence * 100, 0) }}%">
-                                                <i class="bi bi-check-circle-fill"></i>
-                                            </span>
-                                        @elseif ($expense->ai_confidence >= 0.5)
-                                            <span class="badge bg-warning bg-opacity-10 text-warning" title="AI Confidence: {{ number_format($expense->ai_confidence * 100, 0) }}%">
-                                                <i class="bi bi-exclamation-circle-fill"></i>
-                                            </span>
-                                        @else
-                                            <span class="badge bg-danger bg-opacity-10 text-danger" title="AI Confidence: {{ number_format($expense->ai_confidence * 100, 0) }}%">
-                                                <i class="bi bi-x-circle-fill"></i>
-                                            </span>
-                                        @endif
-                                    @else
-                                        <span class="badge bg-info bg-opacity-10 text-info" title="AI analysis pending">
-                                            <i class="bi bi-hourglass-split"></i>
-                                        </span>
-                                    @endif
-                                </td>
-                                <td class="text-end">
-                                    <a href="{{ route('expenses.edit', $expense) }}" class="btn btn-sm btn-outline-secondary" title="Edit">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <form method="POST" action="{{ route('expenses.destroy', $expense) }}" class="d-inline" onsubmit="return confirm('Delete this expense?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="8" class="text-center py-5 text-muted">
-                                    <i class="bi bi-inbox fs-3 d-block mb-2"></i>
-                                    <p class="mb-2">No expenses found.</p>
-                                    <a href="{{ route('expenses.create') }}" class="btn btn-primary btn-sm">
-                                        <i class="bi bi-plus-lg"></i> Add your first expense
-                                    </a>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+            <div class="filter-bar">
+                <form method="GET" action="{{ route('expenses.index') }}">
+                    <input type="text" name="search" class="filter-input filter-search" placeholder="Search description or merchant..." value="{{ $filters['search'] ?? '' }}">
+                    <input type="text" name="category" class="filter-input filter-sm" placeholder="Category" value="{{ $filters['category'] ?? '' }}">
+                    <input type="text" name="payment_method" class="filter-input filter-sm" placeholder="Payment" value="{{ $filters['payment_method'] ?? '' }}">
+                    <input type="date" name="date_from" class="filter-input filter-date" value="{{ $filters['date_from'] ?? '' }}">
+                    <input type="date" name="date_to" class="filter-input filter-date" value="{{ $filters['date_to'] ?? '' }}">
+                    <button type="submit" class="btn-premium btn-primary sm">
+                        <i data-lucide="search"></i>
+                        Search
+                    </button>
+                    @if (request()->anyFilled(['search', 'category', 'payment_method', 'date_from', 'date_to']))
+                        <a href="{{ route('expenses.index') }}" class="btn-premium btn-secondary sm">Clear</a>
+                    @endif
+                </form>
             </div>
         </div>
+    </div>
+
+    <div class="card-premium fade-in-up stagger-2" style="margin-top:20px;overflow:hidden">
+        <div style="overflow-x:auto">
+            <table class="table-premium">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Merchant</th>
+                        <th>Payment</th>
+                        <th style="text-align:right">Amount</th>
+                        <th style="text-align:center">AI</th>
+                        <th style="text-align:right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($expenses as $expense)
+                        <tr>
+                            <td style="white-space:nowrap;font-size:13px;color:var(--text-dim)">{{ $expense->expense_date->format('M d, Y') }}</td>
+                            <td>
+                                <a href="{{ route('expenses.show', $expense) }}" style="text-decoration:none;color:var(--text);font-weight:600;font-size:14px;transition:color var(--transition-fast)">
+                                    {{ Str::limit($expense->description, 40) }}
+                                </a>
+                            </td>
+                            <td>
+                                <span class="badge-premium category">{{ $expense->category }}</span>
+                            </td>
+                            <td style="font-size:13px;color:var(--text-muted)">{{ $expense->merchant ?? '—' }}</td>
+                            <td style="font-size:13px;color:var(--text-muted)">{{ $expense->payment_method }}</td>
+                            <td class="amount-cell">${{ number_format($expense->amount, 2) }}</td>
+                            <td style="text-align:center">
+                                @if ($expense->ai_confidence !== null)
+                                    @if ($expense->ai_confidence >= 0.8)
+                                        <span class="badge-premium confidence-high"><i data-lucide="check-circle" style="width:12px;height:12px"></i> {{ number_format($expense->ai_confidence * 100, 0) }}%</span>
+                                    @elseif ($expense->ai_confidence >= 0.5)
+                                        <span class="badge-premium confidence-medium"><i data-lucide="alert-circle" style="width:12px;height:12px"></i> {{ number_format($expense->ai_confidence * 100, 0) }}%</span>
+                                    @else
+                                        <span class="badge-premium confidence-low"><i data-lucide="x-circle" style="width:12px;height:12px"></i> {{ number_format($expense->ai_confidence * 100, 0) }}%</span>
+                                    @endif
+                                @endif
+                            </td>
+                            <td class="actions-cell">
+                                <a href="{{ route('expenses.edit', $expense) }}" class="btn-premium btn-ghost sm" title="Edit">
+                                    <i data-lucide="pencil" style="width:14px;height:14px"></i>
+                                </a>
+                                <form method="POST" action="{{ route('expenses.destroy', $expense) }}" style="display:inline" onsubmit="return confirm('Delete this expense?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn-premium btn-ghost sm" title="Delete" style="color:var(--danger)">
+                                        <i data-lucide="trash-2" style="width:14px;height:14px"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="8">
+                                <div class="empty-state">
+                                    <div class="empty-state-icon"><i data-lucide="receipt"></i></div>
+                                    <p class="empty-state-title">No expenses found</p>
+                                    <p class="empty-state-text">Start tracking your expenses with AI-powered categorization</p>
+                                    <a href="{{ route('expenses.create') }}" class="btn-premium btn-primary">
+                                        <i data-lucide="plus"></i>
+                                        Add your first expense
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
         @if ($expenses->hasPages())
-            <div class="card-footer bg-white border-top">
-                {{ $expenses->links() }}
+            <div style="padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:center">
+                {{ $expenses->links('pagination::bootstrap-5') }}
             </div>
         @endif
     </div>
-@push('scripts')
-<script>
-(function() {
-    var hasAnalyzing = document.querySelector('.badge.bg-info');
-    if (hasAnalyzing) {
-        setTimeout(function() { location.reload(true); }, 3000);
-    }
-})();
-</script>
-@endpush
 </x-app-layout>

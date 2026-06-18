@@ -1,8 +1,8 @@
-<form method="POST" action="{{ route('profile.update') }}">
+<form method="POST" action="{{ route('profile.update') }}" class="form-premium">
     @csrf
     @method('patch')
 
-    <div class="mb-3">
+    <div style="margin-bottom:16px">
         <label for="name" class="form-label">Name</label>
         <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name', $user->name) }}" required>
         @error('name')
@@ -10,7 +10,7 @@
         @enderror
     </div>
 
-    <div class="mb-3">
+    <div style="margin-bottom:16px">
         <label for="email" class="form-label">Email</label>
         <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email', $user->email) }}" required>
         @error('email')
@@ -18,10 +18,12 @@
         @enderror
     </div>
 
-    <div class="d-flex align-items-center gap-3">
-        <button type="submit" class="btn btn-primary">Save</button>
+    <div style="display:flex;align-items:center;gap:12px">
+        <button type="submit" class="btn-premium btn-primary">Save</button>
         @if (session('status') === 'profile-updated')
-            <span class="text-success small">Saved.</span>
+            <span style="color:var(--success);font-size:13px;display:flex;align-items:center;gap:4px">
+                <i data-lucide="check-circle" style="width:14px;height:14px"></i> Saved.
+            </span>
         @endif
     </div>
 </form>

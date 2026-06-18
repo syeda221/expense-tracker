@@ -18,7 +18,7 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.08) 0%, transparent 50%);
+            background: radial-gradient(ellipse at 50% 50%, rgba(14,207,179,0.08) 0%, transparent 50%);
             pointer-events: none;
             z-index: 0;
         }
@@ -66,7 +66,7 @@
                 <p style="font-size:11px;color:var(--text-dim);margin:0">Visual insights</p>
             </div>
             <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:20px 12px">
-                <div style="width:36px;height:36px;border-radius:8px;background:rgba(168,85,247,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;color:var(--accent)"><i data-lucide="sparkles" style="width:18px;height:18px"></i></div>
+                <div style="width:36px;height:36px;border-radius:8px;background:rgba(35,217,122,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;color:var(--accent)"><i data-lucide="sparkles" style="width:18px;height:18px"></i></div>
                 <p style="font-size:12px;font-weight:600;color:var(--text);margin:0 0 4px">Smart Search</p>
                 <p style="font-size:11px;color:var(--text-dim);margin:0">Ask anything</p>
             </div>

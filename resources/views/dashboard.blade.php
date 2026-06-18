@@ -77,12 +77,12 @@
         <div class="card-premium hover-lift">
             <div class="card-body">
                 <div class="stat-card">
-                    <div class="stat-card-icon" style="background:rgba(168,85,247,0.12);color:var(--accent)">
+                    <div class="stat-card-icon" style="background:var(--primary-subtle);color:var(--primary)">
                         <i data-lucide="repeat"></i>
                     </div>
                     <div class="stat-card-content">
                         <p class="stat-card-label">Recurring</p>
-                        <h3 class="stat-card-value" style="color:var(--accent)">{{ $recurringCount }}</h3>
+                        <h3 class="stat-card-value" style="color:var(--primary)">{{ $recurringCount }}</h3>
                         <span class="stat-card-change neutral">Active subscriptions</span>
                     </div>
                 </div>
@@ -162,7 +162,7 @@
                             </div>
                             <div class="progress-premium">
                                 <div class="progress-bar"
-                                     style="width:{{ $pct }}%;background:{{ ['#8B5CF6','#6366F1','#A855F7','#22C55E','#F59E0B','#EF4444','#3B82F6','#EC4899'][$loop->index % 8] }}">
+                                     style="width:{{ $pct }}%;background:{{ ['#0ECFB3','#0AA896','#38C8F5','#23D97A','#FFB547','#FF5E6C','#3B82F6','#EC4899'][$loop->index % 8] }}">
                                 </div>
                             </div>
                         </div>
@@ -246,66 +246,84 @@
     </div>
 
     <div class="dashboard-bottom fade-in-up stagger-5" style="margin-top:24px">
-        <div class="card-premium">
-            <div class="card-header">
-                <div class="widget-header" style="margin-bottom:0">
-                    <h5 class="widget-title">
-                        <i data-lucide="calendar"></i>
-                        {{ now()->format('F') }} Summary
-                    </h5>
-                </div>
-            </div>
-            <div class="card-body">
+        <div class="card-premium" style="overflow:hidden">
+            <div class="card-body" style="padding:0">
+
                 @php
                     $daysInMonth = now()->daysInMonth;
                     $today = now()->day;
                     $avgPerDay = $today > 0 ? $monthlyTotal / $today : 0;
                     $projectedTotal = $avgPerDay * $daysInMonth;
+                    $monthChange = $previousMonthTotal > 0 ? round(($monthlyTotal - $previousMonthTotal) / $previousMonthTotal * 100, 1) : 0;
                 @endphp
-                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px">
-                    <div style="text-align:center;padding:12px;background:var(--bg-hover);border-radius:12px">
-                        <p style="font-size:11px;color:var(--text-dim);margin:0 0 4px;font-weight:500">Monthly Total</p>
-                        <h4 style="color:var(--success);margin:0;font-size:20px">${{ number_format($monthlyTotal, 2) }}</h4>
+
+                {{-- Header: Title + Trend + Range Switcher --}}
+                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:20px 24px 0">
+                    <div style="display:flex;align-items:center;gap:14px">
+                        <div style="width:42px;height:42px;border-radius:12px;background:rgba(14,207,179,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                            <i data-lucide="trending-up" style="width:20px;height:20px;color:var(--primary)"></i>
+                        </div>
+                        <div>
+                            <h5 style="margin:0;font-size:17px;font-weight:700;letter-spacing:-0.02em;color:var(--text)">{{ now()->format('F Y') }} <span style="font-weight:400;color:var(--text-dim)">Analytics</span></h5>
+                            <div style="display:flex;align-items:center;gap:6px;margin-top:2px">
+                                <span style="font-size:12px;font-weight:600;color:{{ $monthChange >= 0 ? 'var(--success)' : 'var(--danger)' }}">{{ $monthChange >= 0 ? '▲' : '▼' }} {{ number_format(abs($monthChange), 1) }}%</span>
+                                <span style="font-size:11px;color:var(--text-dim)">vs last month</span>
+                            </div>
+                        </div>
                     </div>
-                    <div style="text-align:center;padding:12px;background:var(--bg-hover);border-radius:12px">
-                        <p style="font-size:11px;color:var(--text-dim);margin:0 0 4px;font-weight:500">Daily Avg</p>
-                        <h4 style="color:var(--secondary);margin:0;font-size:20px">${{ number_format($avgPerDay, 2) }}</h4>
-                    </div>
-                    <div style="text-align:center;padding:12px;background:var(--bg-hover);border-radius:12px">
-                        <p style="font-size:11px;color:var(--text-dim);margin:0 0 4px;font-weight:500">Projected</p>
-                        <h4 style="color:var(--warning);margin:0;font-size:20px">${{ number_format($projectedTotal, 2) }}</h4>
-                    </div>
-                    <div style="text-align:center;padding:12px;background:var(--bg-hover);border-radius:12px">
-                        <p style="font-size:11px;color:var(--text-dim);margin:0 0 4px;font-weight:500">Budget Used</p>
-                        <h4 style="color:var(--accent);margin:0;font-size:20px">{{ $today > 0 ? number_format(($today / $daysInMonth) * 100, 0) : 0 }}%</h4>
+                    <div class="range-switcher" style="display:flex;gap:4px;background:var(--bg-hover);border-radius:10px;padding:3px">
+                        @foreach (['7d' => '7D', '30d' => '30D', '3m' => '3M', '6m' => '6M', '1y' => '1Y'] as $rk => $rl)
+                            <button class="range-btn" data-range="{{ $rk }}" style="padding:6px 14px;border:none;border-radius:7px;background:{{ $rk === '30d' ? '#0ECFB3' : 'transparent' }};color:{{ $rk === '30d' ? '#050809' : 'var(--text-dim)' }};font-size:12px;font-weight:600;cursor:pointer;transition:all 150ms;font-family:var(--font-sans)">{{ $rl }}</button>
+                        @endforeach
                     </div>
                 </div>
 
-                @if ($dailyBreakdown->isNotEmpty())
-                    <div>
-                        <div style="display:flex;justify-content:space-between;margin-bottom:10px">
-                            <span style="font-size:12px;color:var(--text-dim);font-weight:500">Daily spending activity</span>
-                            <span style="font-size:12px;color:var(--text-dim)">{{ $today }} of {{ $daysInMonth }} days</span>
-                        </div>
-                        <div style="display:flex;align-items:flex-end;gap:3px;height:80px">
-                            @php $maxDaily = $dailyBreakdown->max('total') ?: 1; @endphp
-                            @foreach ($dailyBreakdown as $day)
-                                @php
-                                    $h = max(4, ($day->total / $maxDaily) * 72);
-                                    $isToday = $day->date == today()->toDateString();
-                                @endphp
-                                <div style="flex:1;text-align:center;position:relative" title="{{ \Carbon\Carbon::parse($day->date)->format('M d') }}: ${{ number_format($day->total, 2) }}">
-                                    <div style="height:{{ $h }}px;width:100%;border-radius:4px 4px 0 0;background:{{ $isToday ? 'linear-gradient(180deg,var(--primary),var(--accent))' : 'var(--bg-hover)' }};transition:background var(--transition-fast);min-height:4px"></div>
-                                    <small style="font-size:8px;color:var(--text-dim);display:block;margin-top:2px">{{ \Carbon\Carbon::parse($day->date)->format('d') }}</small>
-                                </div>
-                            @endforeach
-                        </div>
+                {{-- KPI cards --}}
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 24px 0;border:1px solid var(--border);border-radius:12px;overflow:hidden">
+                    <div style="padding:14px 16px;border-right:1px solid var(--border-light)">
+                        <p style="margin:0 0 2px;font-size:11px;color:var(--text-dim);font-weight:500;letter-spacing:0.3px">TOTAL SPENT</p>
+                        <p style="margin:0;font-size:19px;font-weight:800;color:var(--success);font-variant-numeric:tabular-nums" id="kpiTotal">${{ number_format($monthlyTotal, 2) }}</p>
                     </div>
-                @else
-                    <div class="empty-state" style="padding:24px">
-                        <p style="color:var(--text-dim);font-size:13px;margin:0">No expenses this month</p>
+                    <div style="padding:14px 16px;border-right:1px solid var(--border-light)">
+                        <p style="margin:0 0 2px;font-size:11px;color:var(--text-dim);font-weight:500;letter-spacing:0.3px">DAILY AVG</p>
+                        <p style="margin:0;font-size:19px;font-weight:800;color:var(--secondary);font-variant-numeric:tabular-nums" id="kpiAvg">${{ number_format($avgPerDay, 2) }}</p>
                     </div>
-                @endif
+                    <div style="padding:14px 16px;border-right:1px solid var(--border-light)">
+                        <p style="margin:0 0 2px;font-size:11px;color:var(--text-dim);font-weight:500;letter-spacing:0.3px">PROJECTED</p>
+                        <p style="margin:0;font-size:19px;font-weight:800;color:var(--warning);font-variant-numeric:tabular-nums" id="kpiProjected">${{ number_format($projectedTotal, 2) }}</p>
+                    </div>
+                    <div style="padding:14px 16px">
+                        <p style="margin:0 0 2px;font-size:11px;color:var(--text-dim);font-weight:500;letter-spacing:0.3px">BUDGET USED</p>
+                        <p style="margin:0;font-size:19px;font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums" id="kpiBudget">{{ $today > 0 ? number_format(($today / $daysInMonth) * 100, 0) : 0 }}%</p>
+                    </div>
+                </div>
+
+                {{-- Chart --}}
+                <div style="padding:20px 24px 8px;position:relative">
+                    <div style="height:280px;position:relative">
+                        <canvas id="spendingChart"></canvas>
+                    </div>
+                </div>
+
+                {{-- Footer stats --}}
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:0 24px 20px;border:1px solid var(--border);border-radius:12px;overflow:hidden">
+                    <div style="padding:12px 16px;border-right:1px solid var(--border-light)">
+                        <p style="margin:0 0 2px;font-size:10px;color:var(--text-dim);font-weight:500;text-transform:uppercase;letter-spacing:0.5px">Highest Day</p>
+                        <p style="margin:0;font-size:14px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums" id="statHighest">—</p>
+                    </div>
+                    <div style="padding:12px 16px;border-right:1px solid var(--border-light)">
+                        <p style="margin:0 0 2px;font-size:10px;color:var(--text-dim);font-weight:500;text-transform:uppercase;letter-spacing:0.5px">Lowest Day</p>
+                        <p style="margin:0;font-size:14px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums" id="statLowest">—</p>
+                    </div>
+                    <div style="padding:12px 16px;border-right:1px solid var(--border-light)">
+                        <p style="margin:0 0 2px;font-size:10px;color:var(--text-dim);font-weight:500;text-transform:uppercase;letter-spacing:0.5px">Daily Avg</p>
+                        <p style="margin:0;font-size:14px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums" id="statAvg">—</p>
+                    </div>
+                    <div style="padding:12px 16px">
+                        <p style="margin:0 0 2px;font-size:10px;color:var(--text-dim);font-weight:500;text-transform:uppercase;letter-spacing:0.5px">Transactions</p>
+                        <p style="margin:0;font-size:14px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums" id="statCount">—</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -317,6 +335,7 @@
         Chart.defaults.color = '#94A3B8';
         Chart.defaults.borderColor = 'rgba(255,255,255,0.08)';
 
+        // ── Monthly bar chart ──
         const monthlyData = @json($monthlySpending);
         const categoryData = @json($categoryDistribution);
 
@@ -325,9 +344,9 @@
         monthlyData.forEach(function (d) { monthlyValues[d.month - 1] = parseFloat(d.total); });
 
         const barCtx = document.getElementById('monthlyChart').getContext('2d');
-        const gradient = barCtx.createLinearGradient(0, 0, 0, 280);
-        gradient.addColorStop(0, 'rgba(139, 92, 246, 0.6)');
-        gradient.addColorStop(1, 'rgba(139, 92, 246, 0.05)');
+        const barGradient = barCtx.createLinearGradient(0, 0, 0, 280);
+        barGradient.addColorStop(0, 'rgba(14, 207, 179, 0.6)');
+        barGradient.addColorStop(1, 'rgba(14, 207, 179, 0.05)');
 
         new Chart(barCtx, {
             type: 'bar',
@@ -336,8 +355,8 @@
                 datasets: [{
                     label: 'Spending',
                     data: monthlyValues,
-                    backgroundColor: gradient,
-                    borderColor: '#8B5CF6',
+                    backgroundColor: barGradient,
+                    borderColor: '#0ECFB3',
                     borderWidth: 1,
                     borderRadius: 6,
                     borderSkipped: false,
@@ -376,7 +395,8 @@
             }
         });
 
-        const colors = ['#8B5CF6','#6366F1','#A855F7','#22C55E','#F59E0B','#EF4444','#3B82F6','#EC4899','#14B8A6','#F97316'];
+        // ── Category doughnut chart ──
+        const colors = ['#0ECFB3','#0AA896','#38C8F5','#23D97A','#FFB547','#FF5E6C','#3B82F6','#EC4899','#14B8A6','#F97316'];
 
         if (categoryData.length > 0) {
             new Chart(document.getElementById('categoryChart'), {
@@ -427,6 +447,146 @@
         } else {
             document.getElementById('categoryChart').parentElement.innerHTML = '<p style="color:var(--text-dim);font-size:13px;text-align:center">No data</p>';
         }
+
+        // ── Spending line chart (trading-style) ──
+        const chartRanges = @json($chartRanges);
+        let activeRange = '30d';
+        let spendingChart = null;
+        const chartEl = document.getElementById('spendingChart');
+        if (!chartEl) return;
+
+        function fmtDate(d) {
+            var p = d.split('-');
+            var dt = new Date(+p[0], +p[1] - 1, +p[2]);
+            return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+
+        function renderChart(rangeKey) {
+            var range = chartRanges[rangeKey];
+            if (!range) return;
+            var data = range.dailyData || [];
+
+            var labels = data.map(function (d) { return fmtDate(d.date); });
+            var values = data.map(function (d) { return d.total; });
+
+            var ctx = chartEl.getContext('2d');
+            var grad = ctx.createLinearGradient(0, 0, 0, 280);
+            grad.addColorStop(0, 'rgba(14, 207, 179, 0.35)');
+            grad.addColorStop(1, 'rgba(14, 207, 179, 0.01)');
+
+            if (spendingChart) { spendingChart.destroy(); }
+
+            spendingChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Spending',
+                        data: values,
+                        borderColor: '#0ECFB3',
+                        backgroundColor: grad,
+                        borderWidth: 2.5,
+                        pointRadius: 0,
+                        pointHoverRadius: 5,
+                        pointHoverBackgroundColor: '#0ECFB3',
+                        pointHoverBorderColor: '#050809',
+                        pointHoverBorderWidth: 2,
+                        tension: 0.35,
+                        fill: true,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 800,
+                        easing: 'easeInOutQuart'
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index',
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#1f1f23',
+                            titleColor: '#F8FAFC',
+                            bodyColor: '#0ECFB3',
+                            borderColor: 'rgba(14,207,179,0.2)',
+                            borderWidth: 1,
+                            padding: 12,
+                            cornerRadius: 8,
+                            displayColors: false,
+                            callbacks: {
+                                title: function (items) {
+                                    return items[0].label;
+                                },
+                                label: function (ctx) {
+                                    return '$' + parseFloat(ctx.raw).toLocaleString('en-US', { minimumFractionDigits: 2 });
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255,255,255,0.04)',
+                                drawBorder: false,
+                            },
+                            ticks: {
+                                callback: function (v) { return '$' + v; },
+                                font: { size: 10 },
+                                color: '#64748b',
+                                maxTicksLimit: 6,
+                            }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                font: { size: 10 },
+                                color: '#64748b',
+                                maxTicksLimit: 12,
+                                maxRotation: 0,
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Update KPI cards
+            document.getElementById('kpiTotal').textContent = '$' + Number(range.total).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('kpiAvg').textContent = '$' + Number(range.avgDaily).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('kpiProjected').textContent = '$' + Number(range.total).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('kpiBudget').textContent = data.filter(function (d) { return d.total > 0; }).length + '/' + data.length + ' days';
+
+            // Update footer stats
+            var h = range.highestDay;
+            document.getElementById('statHighest').textContent = h ? '$' + Number(h.total).toLocaleString('en-US', { minimumFractionDigits: 2 }) + ' · ' + fmtDate(h.date) : '—';
+            var l = range.lowestDay;
+            document.getElementById('statLowest').textContent = l ? '$' + Number(l.total).toLocaleString('en-US', { minimumFractionDigits: 2 }) + ' · ' + fmtDate(l.date) : '—';
+            document.getElementById('statAvg').textContent = '$' + Number(range.avgDaily).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('statCount').textContent = Number(range.count).toLocaleString();
+        }
+
+        // Range switcher click handlers
+        document.querySelectorAll('.range-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var rk = this.getAttribute('data-range');
+                if (!rk || rk === activeRange) return;
+                activeRange = rk;
+                document.querySelectorAll('.range-btn').forEach(function (b) {
+                    b.style.background = 'transparent';
+                    b.style.color = 'var(--text-dim)';
+                });
+                this.style.background = '#0ECFB3';
+                this.style.color = '#050809';
+                renderChart(rk);
+            });
+        });
+
+        // Initial render (30d default)
+        renderChart('30d');
     });
     </script>
     @endpush

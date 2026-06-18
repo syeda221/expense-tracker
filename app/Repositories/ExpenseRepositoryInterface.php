@@ -52,5 +52,11 @@ interface ExpenseRepositoryInterface
 
     public function getCurrentMonthDailyBreakdown(int $userId): Collection;
 
+    public function getDailyBreakdown(int $userId, string $startDate, string $endDate): Collection;
+
+    public function getPeriodTotal(int $userId, string $startDate, string $endDate): float;
+
+    public function getPeriodCount(int $userId, string $startDate, string $endDate): int;
+
     public function sumByFilters(int $userId, array $filters = []): array;
 }

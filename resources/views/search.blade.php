@@ -9,17 +9,32 @@
                 <input type="text" name="q" value="{{ $query ?? '' }}" placeholder="Ask AI about your expenses..." autofocus autocomplete="off">
             </div>
             <div class="search-examples">
-                <button type="submit" name="q" value="How much did I spend on food?" class="search-example-btn" onclick="this.form.submit()">Food expenses</button>
-                <button type="submit" name="q" value="Entertainment expenses this month" class="search-example-btn" onclick="this.form.submit()">Entertainment</button>
-                <button type="submit" name="q" value="Fuel expenses above 5000" class="search-example-btn" onclick="this.form.submit()">Fuel above 5000</button>
-                <button type="submit" name="q" value="Show shopping by card" class="search-example-btn" onclick="this.form.submit()">Shopping by card</button>
-                <button type="submit" name="q" value="Show Uber expenses" class="search-example-btn" onclick="this.form.submit()">Uber expenses</button>
-                <button type="submit" name="q" value="Bills between January and March" class="search-example-btn" onclick="this.form.submit()">Bills Jan–Mar</button>
-                <button type="submit" name="q" value="Netflix subscriptions" class="search-example-btn" onclick="this.form.submit()">Subscriptions</button>
-                <button type="submit" name="q" value="Highest expense this year" class="search-example-btn" onclick="this.form.submit()">Highest this year</button>
+                <button type="button" class="search-example-btn" data-query="How much did I spend on food?">Food expenses</button>
+                <button type="button" class="search-example-btn" data-query="Entertainment expenses this month">Entertainment</button>
+                <button type="button" class="search-example-btn" data-query="Fuel expenses above 5000">Fuel above 5000</button>
+                <button type="button" class="search-example-btn" data-query="Show shopping by card">Shopping by card</button>
+                <button type="button" class="search-example-btn" data-query="Show Uber expenses">Uber expenses</button>
+                <button type="button" class="search-example-btn" data-query="Bills between January and March">Bills Jan–Mar</button>
+                <button type="button" class="search-example-btn" data-query="Netflix subscriptions">Subscriptions</button>
+                <button type="button" class="search-example-btn" data-query="Highest expense this year">Highest this year</button>
             </div>
         </form>
     </div>
+
+    @push('scripts')
+    <script>
+    document.querySelector('.search-examples')?.addEventListener('click', function (e) {
+        var btn = e.target.closest('.search-example-btn');
+        if (!btn) return;
+        e.preventDefault();
+        var q = btn.getAttribute('data-query');
+        if (!q) return;
+        var input = document.querySelector('.search-box input[name="q"]');
+        if (input) input.value = q;
+        btn.closest('form').submit();
+    });
+    </script>
+    @endpush
 
     @if ($query)
         <div class="fade-in-up" style="margin-top:32px">

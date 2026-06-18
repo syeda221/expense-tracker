@@ -19,26 +19,33 @@ return [
     ],
 
     'classifier' => [
-        'prompt' => 'You are an expense classifier. Given an expense description, extract the category and merchant. Return ONLY valid JSON.
+        'prompt' => 'You classify expense descriptions into category + merchant. Return ONLY valid JSON.
 
-Categories: Food & Dining, Shopping, Transport, Fuel, Groceries, Bills, Utilities, Healthcare, Education, Entertainment, Travel, Rent, Investment, Salary, Subscription, Other
+CATEGORIES: Food & Dining, Shopping, Transport, Fuel, Groceries, Bills, Utilities, Healthcare, Education, Entertainment, Travel, Rent, Investment, Salary, Subscription, Other
 
-MERCHANT EXTRACTION RULES:
-- If a business/company/person name is mentioned, return it as the merchant.
-- If no explicit name, infer the most likely merchant from context (e.g., "school fee" -> "School", "electricity bill" -> "Electricity Provider", "bus fare" -> "Transport", "medicine from pharmacy" -> infer the pharmacy type).
-- NEVER leave merchant null if context provides a clue. Only null if truly impossible.
-- Return the merchant name exactly as mentioned, do not modify it.
+MERCHANT EXTRACTION — Follow these rules STRICTLY:
+1. If a specific business name, company, store, person, or institution is mentioned, return it EXACTLY as written.
+2. If description starts with "paid" or "pay" followed by a noun (e.g. "paid school fee", "paid rent"), that noun is the merchant.
+3. If description mentions a known brand/service (PTCL, KFC, Netflix, Uber, Daraz, Careem, Shell, etc.), return that brand name.
+4. If no specific name but context is clear, infer a generic merchant (e.g., "electricity bill" -> "Electricity Provider", "bus fare" -> "Bus Service", "grocery shopping" -> "Supermarket", "school fee" -> "School", "tuition fee" -> "Tuition Center", "medicine" -> "Pharmacy", "fuel" -> "Petrol Station", "gas bill" -> "Gas Company", "internet bill" -> "ISP", "water bill" -> "Water Company", "rent" -> "Landlord").
+5. NEVER return null. Only use "Unknown" as absolute last resort.
+6. is_recurring=true for: bills, subscriptions, rent, tuition, memberships, insurance, EMIs.
 
-Confidence: >0.8 if category is clear, 0.5-0.8 if uncertain, <0.5 if guessing.
+Confidence: >0.8 if clear, 0.5-0.8 if uncertain.
 
 Examples:
-"Paid tuition at ABC School" -> {"category":"Education","merchant":"ABC School","confidence":0.95,"is_recurring":false}
-"Electricity bill" -> {"category":"Bills","merchant":"Electricity Provider","confidence":0.9,"is_recurring":true}
+"Paid school fee" -> {"category":"Education","merchant":"School","confidence":0.9,"is_recurring":true}
+"PTCL internet bill" -> {"category":"Bills","merchant":"PTCL","confidence":0.95,"is_recurring":true}
 "Netflix monthly subscription" -> {"category":"Subscription","merchant":"Netflix","confidence":0.98,"is_recurring":true}
 "Bought medicine from City Pharmacy" -> {"category":"Healthcare","merchant":"City Pharmacy","confidence":0.95,"is_recurring":false}
 "Uber ride to downtown" -> {"category":"Transport","merchant":"Uber","confidence":0.95,"is_recurring":false}
 "Paid rent to Ali" -> {"category":"Rent","merchant":"Ali","confidence":0.9,"is_recurring":true}
 "Daraz shopping" -> {"category":"Shopping","merchant":"Daraz","confidence":0.95,"is_recurring":false}
+"KFC lunch" -> {"category":"Food & Dining","merchant":"KFC","confidence":0.97,"is_recurring":false}
+"Electricity bill" -> {"category":"Bills","merchant":"Electricity Provider","confidence":0.9,"is_recurring":true}
+"Bus fare to office" -> {"category":"Transport","merchant":"Bus Service","confidence":0.85,"is_recurring":false}
+"Paid tuition at ABC School" -> {"category":"Education","merchant":"ABC School","confidence":0.95,"is_recurring":true}
+"Bought groceries from Carrefour" -> {"category":"Groceries","merchant":"Carrefour","confidence":0.95,"is_recurring":false}
 
 JSON: {"category":"...","merchant":"...","confidence":0.0-1.0,"is_recurring":true|false}
 

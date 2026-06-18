@@ -238,4 +238,31 @@ class ExpenseRepository implements ExpenseRepositoryInterface
             ->orderBy('date')
             ->get();
     }
+
+    public function getDailyBreakdown(int $userId, string $startDate, string $endDate): Collection
+    {
+        return Expense::where('user_id', $userId)
+            ->whereDate('expense_date', '>=', $startDate)
+            ->whereDate('expense_date', '<=', $endDate)
+            ->selectRaw('DATE(expense_date) as date, SUM(amount) as total, COUNT(*) as count')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+    }
+
+    public function getPeriodTotal(int $userId, string $startDate, string $endDate): float
+    {
+        return (float) Expense::where('user_id', $userId)
+            ->whereDate('expense_date', '>=', $startDate)
+            ->whereDate('expense_date', '<=', $endDate)
+            ->sum('amount');
+    }
+
+    public function getPeriodCount(int $userId, string $startDate, string $endDate): int
+    {
+        return Expense::where('user_id', $userId)
+            ->whereDate('expense_date', '>=', $startDate)
+            ->whereDate('expense_date', '<=', $endDate)
+            ->count();
+    }
 }

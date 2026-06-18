@@ -2,21 +2,20 @@
 
 namespace App\Providers;
 
+use App\Repositories\ExpenseRepository;
+use App\Repositories\ExpenseRepositoryInterface;
+use App\Services\AI\AIServiceInterface;
+use App\Services\AI\GeminiService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
-        //
+        $this->app->bind(ExpenseRepositoryInterface::class, ExpenseRepository::class);
+        $this->app->bind(AIServiceInterface::class, GeminiService::class);
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         //

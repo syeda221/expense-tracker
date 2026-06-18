@@ -35,4 +35,12 @@ interface ExpenseRepositoryInterface
     public function getMonthlySpending(int $userId): Collection;
 
     public function getCategoryDistribution(int $userId): Collection;
+
+    public function getTodayCount(int $userId): int;
+
+    public function getMonthlyCount(int $userId): int;
+
+    public function getYearlyCount(int $userId): int;
+
+    public function getCurrentMonthDailyBreakdown(int $userId): Collection;
 }

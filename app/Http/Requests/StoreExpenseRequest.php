@@ -16,7 +16,7 @@ class StoreExpenseRequest extends FormRequest
         return [
             'amount' => ['required', 'numeric', 'min:0', 'max:999999999.99'],
             'description' => ['required', 'string', 'max:1000'],
-            'category' => ['required', 'string', 'max:255'],
+            'category' => ['nullable', 'string', 'max:255'],
             'merchant' => ['nullable', 'string', 'max:255'],
             'payment_method' => ['required', 'string', 'max:255'],
             'expense_date' => ['required', 'date', 'before_or_equal:today'],

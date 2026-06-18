@@ -139,4 +139,37 @@ class ExpenseRepository implements ExpenseRepositoryInterface
             ->orderBy('total', 'desc')
             ->get();
     }
+
+    public function getTodayCount(int $userId): int
+    {
+        return Expense::where('user_id', $userId)
+            ->whereDate('expense_date', today())
+            ->count();
+    }
+
+    public function getMonthlyCount(int $userId): int
+    {
+        return Expense::where('user_id', $userId)
+            ->whereYear('expense_date', now()->year)
+            ->whereMonth('expense_date', now()->month)
+            ->count();
+    }
+
+    public function getYearlyCount(int $userId): int
+    {
+        return Expense::where('user_id', $userId)
+            ->whereYear('expense_date', now()->year)
+            ->count();
+    }
+
+    public function getCurrentMonthDailyBreakdown(int $userId): Collection
+    {
+        return Expense::where('user_id', $userId)
+            ->whereYear('expense_date', now()->year)
+            ->whereMonth('expense_date', now()->month)
+            ->selectRaw('DATE(expense_date) as date, SUM(amount) as total, COUNT(*) as count')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+    }
 }

@@ -12,7 +12,7 @@ return [
         ],
         'groq' => [
             'api_key' => env('GROQ_API_KEY'),
-            'model' => env('GROQ_MODEL', 'llama3-70b-8192'),
+            'model' => env('GROQ_MODEL', 'llama-3.3-70b-versatile'),
             'temperature' => 0.1,
             'max_retries' => 3,
         ],

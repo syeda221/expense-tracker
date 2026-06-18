@@ -72,13 +72,17 @@ class ExpenseService
     {
         return [
             'todayTotal' => $this->getTodayTotal($userId),
+            'todayCount' => $this->expenseRepository->getTodayCount($userId),
             'monthlyTotal' => $this->getMonthlyTotal($userId),
+            'monthlyCount' => $this->expenseRepository->getMonthlyCount($userId),
             'yearlyTotal' => $this->getYearlyTotal($userId),
+            'yearlyCount' => $this->expenseRepository->getYearlyCount($userId),
             'highestExpense' => $this->getHighestExpense($userId),
             'topCategory' => $this->getTopCategory($userId),
             'recentExpenses' => $this->getRecentExpenses($userId),
             'monthlySpending' => $this->expenseRepository->getMonthlySpending($userId),
             'categoryDistribution' => $this->expenseRepository->getCategoryDistribution($userId),
+            'dailyBreakdown' => $this->expenseRepository->getCurrentMonthDailyBreakdown($userId),
         ];
     }
 }

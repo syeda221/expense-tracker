@@ -34,13 +34,14 @@ class ExpenseController extends Controller
     {
         $data = $request->validated();
         $data['user_id'] = $request->user()->id;
+        $data['category'] = $data['category'] ?? 'Other';
 
         $expense = $this->expenseService->create($data);
 
         ProcessAIClassification::dispatch($expense);
 
-        return to_route('expenses.index')
-            ->with('success', 'Expense created successfully. AI is analyzing it now.');
+        return to_route('expenses.show', $expense)
+            ->with('success', 'Expense saved successfully. AI is analyzing it now.');
     }
 
     public function show(Request $request, Expense $expense): View

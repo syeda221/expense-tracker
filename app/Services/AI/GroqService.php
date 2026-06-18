@@ -48,7 +48,7 @@ class GroqService implements AIServiceInterface
                     ['role' => 'user', 'content' => $prompt],
                 ],
                 'temperature' => $this->temperature,
-                'max_tokens' => 256,
+                'max_tokens' => 512,
             ]);
 
         if ($response->failed()) {

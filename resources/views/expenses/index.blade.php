@@ -91,7 +91,11 @@
                         <tr>
                             <td colspan="8">
                                 <div class="empty-state">
-                                    <div class="empty-state-icon"><i data-lucide="receipt"></i></div>
+                                    <div class="owl-container" style="margin-bottom: 16px;">
+                                        <video autoplay loop muted playsinline class="owl-video" style="width:160px;height:160px;margin:-16px 0">
+                                            <source src="{{ asset('video/Mascot_placing_wing_on_chin_202606242120.mp4') }}" type="video/mp4">
+                                        </video>
+                                    </div>
                                     <p class="empty-state-title">No expenses found</p>
                                     <p class="empty-state-text">Start tracking your expenses with AI-powered categorization</p>
                                     <a href="{{ route('expenses.create') }}" class="btn-premium btn-primary">

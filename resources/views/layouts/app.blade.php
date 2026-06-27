@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="light">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -154,6 +154,33 @@
 
     document.addEventListener('DOMContentLoaded', function () {
         lucide.createIcons();
+
+        // Bulletproof autoplay logic with user interaction fallback
+        const playVideos = () => {
+            document.querySelectorAll('.owl-video').forEach(v => {
+                v.defaultMuted = true;
+                v.muted = true;
+                v.setAttribute('muted', 'muted');
+                
+                const playPromise = v.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(e => {
+                        console.log("Autoplay blocked, waiting for interaction...", e);
+                    });
+                }
+            });
+        };
+
+        // Try to play immediately
+        playVideos();
+
+        // Fallback: Play on first interaction if blocked
+        const interactionEvents = ['click', 'touchstart', 'scroll', 'keydown'];
+        const onInteract = () => {
+            playVideos();
+            interactionEvents.forEach(evt => document.removeEventListener(evt, onInteract));
+        };
+        interactionEvents.forEach(evt => document.addEventListener(evt, onInteract, { once: true }));
     });
     </script>
 

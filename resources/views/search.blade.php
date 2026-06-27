@@ -87,7 +87,11 @@
             @elseif ($usedAi && $summary !== null && $summary['count'] === 0)
                 <div class="card-premium">
                     <div class="empty-state">
-                        <div class="empty-state-icon"><i data-lucide="search-x"></i></div>
+                        <div class="owl-container" style="margin-bottom: 16px;">
+                            <video autoplay loop muted playsinline class="owl-video" style="width:160px;height:160px;margin:-16px 0">
+                                <source src="{{ asset('video/Mascot_placing_wing_on_chin_202606242120.mp4') }}" type="video/mp4">
+                            </video>
+                        </div>
                         <p class="empty-state-title">No matching expenses</p>
                         <p class="empty-state-text">Try a different search or adjust your query</p>
                         <a href="{{ route('expenses.index') }}" class="btn-premium btn-secondary">
@@ -136,7 +140,11 @@
             @else
                 <div class="card-premium">
                     <div class="empty-state">
-                        <div class="empty-state-icon"><i data-lucide="search-x"></i></div>
+                        <div class="owl-container" style="margin-bottom: 16px;">
+                            <video autoplay loop muted playsinline class="owl-video" style="width:160px;height:160px;margin:-16px 0">
+                                <source src="{{ asset('video/Mascot_placing_wing_on_chin_202606242120.mp4') }}" type="video/mp4">
+                            </video>
+                        </div>
                         <p class="empty-state-title">No results found</p>
                         <p class="empty-state-text">Try different keywords or browse your expenses</p>
                         <a href="{{ route('expenses.index') }}" class="btn-premium btn-secondary">

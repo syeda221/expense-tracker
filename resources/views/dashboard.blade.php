@@ -5,9 +5,17 @@
         $highestCatName = $categoryDistribution->isNotEmpty() ? $categoryDistribution->first()->category : 'N/A';
     @endphp
 
-    <div class="page-header fade-in">
-        <h1 class="page-title">Good {{ now()->hour < 12 ? 'morning' : (now()->hour < 17 ? 'afternoon' : 'evening') }}, {{ Auth::user()->name }}</h1>
-        <p class="page-subtitle">Here's your financial overview for {{ now()->format('F Y') }}</p>
+    <div class="page-header fade-in" style="display:flex;align-items:center;justify-content:between;gap:24px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;box-shadow:var(--shadow-card);margin-bottom:28px">
+        <div style="flex:1">
+            <h1 class="page-title" style="margin:0;font-size:24px">Good {{ now()->hour < 12 ? 'morning' : (now()->hour < 17 ? 'afternoon' : 'evening') }}, {{ Auth::user()->name }}! 👋</h1>
+            <p class="page-subtitle" style="margin:4px 0 0;font-size:14px;color:var(--text-muted)">Here's your financial overview for {{ now()->format('F Y') }}.</p>
+        </div>
+        <div class="owl-container" style="position:relative;flex-shrink:0">
+            <video autoplay loop muted playsinline class="owl-video" style="width:140px;height:140px;margin:-16px 0;">
+                <source src="{{ asset('video/Mascot_placing_wing_on_chin_202606242120.mp4') }}" type="video/mp4">
+            </video>
+            <div style="position:absolute;top:-4px;right:-4px;background:var(--primary);color:#fff;font-size:8px;font-weight:700;padding:1px 5px;border-radius:20px;box-shadow:0 2px 4px rgba(0,0,0,0.1);white-space:nowrap">AI Active</div>
+        </div>
     </div>
 
     <div class="dashboard-stats fade-in-up stagger-1">
@@ -174,7 +182,11 @@
                     @endif
                 @else
                     <div class="empty-state">
-                        <div class="empty-state-icon"><i data-lucide="folder-open"></i></div>
+                        <div class="owl-container" style="margin-bottom: 16px;">
+                            <video autoplay loop muted playsinline class="owl-video" style="width:160px;height:160px;margin:-16px 0">
+                                <source src="{{ asset('video/Mascot_placing_wing_on_chin_202606242120.mp4') }}" type="video/mp4">
+                            </video>
+                        </div>
                         <p class="empty-state-title">No categories yet</p>
                         <p class="empty-state-text">Start adding expenses to see your category breakdown</p>
                         <a href="{{ route('expenses.create') }}" class="btn-premium btn-primary">Add Expense</a>
@@ -235,7 +247,11 @@
                     </div>
                 @else
                     <div class="empty-state">
-                        <div class="empty-state-icon"><i data-lucide="receipt"></i></div>
+                        <div class="owl-container" style="margin-bottom: 16px;">
+                            <video autoplay loop muted playsinline class="owl-video" style="width:160px;height:160px;margin:-16px 0">
+                                <source src="{{ asset('video/Mascot_placing_wing_on_chin_202606242120.mp4') }}" type="video/mp4">
+                            </video>
+                        </div>
                         <p class="empty-state-title">No transactions yet</p>
                         <p class="empty-state-text">Add your first expense to get started</p>
                         <a href="{{ route('expenses.create') }}" class="btn-premium btn-primary">Add Expense</a>
@@ -306,12 +322,29 @@
                                 <p style="margin:0;font-size:18px;font-weight:700;color:var(--text);font-family:var(--font-mono)">${{ number_format($overall['daily_budget'] ?? 0, 2) }}</p>
                             </div>
                         </div>
+                        @if ($pct >= 100)
+                            <div style="margin-top:12px;padding:12px 14px;background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15);border-radius:8px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+                                <div style="flex:1">
+                                    <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:var(--danger)">⚠️ Overspending Alert</p>
+                                    <p style="margin:0;font-size:12px;color:var(--text-muted)">You have exceeded your monthly budget by {{ number_format($pct - 100, 0) }}%!</p>
+                                </div>
+                                <video autoplay loop muted playsinline class="owl-video" style="width:96px;height:96px;flex-shrink:0;margin:-10px 0">
+                                    <source src="{{ asset('video/Owl_notices_spending_increase_202606250101.mp4') }}" type="video/mp4">
+                                </video>
+                            </div>
+                        @endif
+
                         @if (!empty($budgetSummary['alerts']))
-                            <div style="margin-top:12px;padding:10px 14px;background:rgba(255,181,71,0.1);border:1px solid rgba(255,181,71,0.2);border-radius:8px">
-                                <p style="margin:0 0 6px;font-size:12px;font-weight:600;color:var(--warning)">⚠️ Budget Alerts</p>
-                                @foreach ($budgetSummary['alerts'] as $alert)
-                                    <p style="margin:0 0 2px;font-size:12px;color:var(--text-dim)">{{ $alert['label'] }}: {{ $alert['percentage'] }}% used</p>
-                                @endforeach
+                            <div style="margin-top:12px;padding:12px 14px;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.15);border-radius:8px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+                                <div style="flex:1">
+                                    <p style="margin:0 0 6px;font-size:12px;font-weight:700;color:var(--warning)">⚠️ Budget Alerts</p>
+                                    @foreach ($budgetSummary['alerts'] as $alert)
+                                        <p style="margin:0 0 2px;font-size:12px;color:var(--text-muted)">{{ $alert['label'] }}: {{ $alert['percentage'] }}% used</p>
+                                    @endforeach
+                                </div>
+                                <video autoplay loop muted playsinline class="owl-video" style="width:96px;height:96px;flex-shrink:0;margin:-10px 0">
+                                    <source src="{{ asset('video/Owl_notices_spending_increase_202606250101.mp4') }}" type="video/mp4">
+                                </video>
                             </div>
                         @endif
                     </div>
@@ -408,8 +441,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function () {
-        Chart.defaults.color = '#94A3B8';
-        Chart.defaults.borderColor = 'rgba(255,255,255,0.08)';
+        Chart.defaults.color = '#6B7280';
+        Chart.defaults.borderColor = '#E7ECF2';
 
         // ── Monthly bar chart ──
         const monthlyData = @json($monthlySpending);
@@ -421,8 +454,8 @@
 
         const barCtx = document.getElementById('monthlyChart').getContext('2d');
         const barGradient = barCtx.createLinearGradient(0, 0, 0, 280);
-        barGradient.addColorStop(0, 'rgba(14, 207, 179, 0.6)');
-        barGradient.addColorStop(1, 'rgba(14, 207, 179, 0.05)');
+        barGradient.addColorStop(0, 'rgba(22, 199, 183, 0.65)');
+        barGradient.addColorStop(1, 'rgba(22, 199, 183, 0.05)');
 
         new Chart(barCtx, {
             type: 'bar',
@@ -432,7 +465,7 @@
                     label: 'Spending',
                     data: monthlyValues,
                     backgroundColor: barGradient,
-                    borderColor: '#0ECFB3',
+                    borderColor: '#16C7B7',
                     borderWidth: 1,
                     borderRadius: 6,
                     borderSkipped: false,
@@ -444,10 +477,10 @@
                 plugins: {
                     legend: { display: false },
                     tooltip: {
-                        backgroundColor: '#1f1f23',
-                        titleColor: '#F8FAFC',
-                        bodyColor: '#94A3B8',
-                        borderColor: 'rgba(255,255,255,0.08)',
+                        backgroundColor: '#FFFFFF',
+                        titleColor: '#1F2937',
+                        bodyColor: '#6B7280',
+                        borderColor: '#E7ECF2',
                         borderWidth: 1,
                         padding: 12,
                         cornerRadius: 8,
@@ -461,7 +494,7 @@
                 scales: {
                     y: {
                         beginAtZero: true,
-                        grid: { color: 'rgba(255,255,255,0.04)' },
+                        grid: { color: 'rgba(231, 236, 242, 0.6)' },
                         ticks: { callback: function (v) { return '$' + v; } }
                     },
                     x: {
@@ -472,7 +505,7 @@
         });
 
         // ── Category doughnut chart ──
-        const colors = ['#0ECFB3','#0AA896','#38C8F5','#23D97A','#FFB547','#FF5E6C','#3B82F6','#EC4899','#14B8A6','#F97316'];
+        const colors = ['#16C7B7', '#3B82F6', '#22C55E', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#14B8A6', '#F97316'];
 
         if (categoryData.length > 0) {
             new Chart(document.getElementById('categoryChart'), {
@@ -495,17 +528,17 @@
                         legend: {
                             position: 'bottom',
                             labels: {
-                                color: '#94A3B8',
+                                color: '#6B7280',
                                 boxWidth: 8,
                                 padding: 8,
                                 font: { size: 11 }
                             }
                         },
                         tooltip: {
-                            backgroundColor: '#1f1f23',
-                            titleColor: '#F8FAFC',
-                            bodyColor: '#94A3B8',
-                            borderColor: 'rgba(255,255,255,0.08)',
+                            backgroundColor: '#FFFFFF',
+                            titleColor: '#1F2937',
+                            bodyColor: '#6B7280',
+                            borderColor: '#E7ECF2',
                             borderWidth: 1,
                             padding: 12,
                             cornerRadius: 8,
@@ -547,8 +580,8 @@
 
             var ctx = chartEl.getContext('2d');
             var grad = ctx.createLinearGradient(0, 0, 0, 280);
-            grad.addColorStop(0, 'rgba(14, 207, 179, 0.35)');
-            grad.addColorStop(1, 'rgba(14, 207, 179, 0.01)');
+            grad.addColorStop(0, 'rgba(22, 199, 183, 0.3)');
+            grad.addColorStop(1, 'rgba(22, 199, 183, 0.0)');
 
             if (spendingChart) { spendingChart.destroy(); }
 
@@ -559,13 +592,13 @@
                     datasets: [{
                         label: 'Spending',
                         data: values,
-                        borderColor: '#0ECFB3',
+                        borderColor: '#16C7B7',
                         backgroundColor: grad,
                         borderWidth: 2.5,
                         pointRadius: 0,
                         pointHoverRadius: 5,
-                        pointHoverBackgroundColor: '#0ECFB3',
-                        pointHoverBorderColor: '#050809',
+                        pointHoverBackgroundColor: '#16C7B7',
+                        pointHoverBorderColor: '#FFFFFF',
                         pointHoverBorderWidth: 2,
                         tension: 0.35,
                         fill: true,
@@ -585,10 +618,10 @@
                     plugins: {
                         legend: { display: false },
                         tooltip: {
-                            backgroundColor: '#1f1f23',
-                            titleColor: '#F8FAFC',
-                            bodyColor: '#0ECFB3',
-                            borderColor: 'rgba(14,207,179,0.2)',
+                            backgroundColor: '#FFFFFF',
+                            titleColor: '#1F2937',
+                            bodyColor: '#16C7B7',
+                            borderColor: 'rgba(22,199,183,0.2)',
                             borderWidth: 1,
                             padding: 12,
                             cornerRadius: 8,
@@ -607,13 +640,13 @@
                         y: {
                             beginAtZero: true,
                             grid: {
-                                color: 'rgba(255,255,255,0.04)',
+                                color: '#E7ECF2',
                                 drawBorder: false,
                             },
                             ticks: {
                                 callback: function (v) { return '$' + v; },
                                 font: { size: 10 },
-                                color: '#64748b',
+                                color: '#6B7280',
                                 maxTicksLimit: 6,
                             }
                         },
@@ -621,7 +654,7 @@
                             grid: { display: false },
                             ticks: {
                                 font: { size: 10 },
-                                color: '#64748b',
+                                color: '#6B7280',
                                 maxTicksLimit: 12,
                                 maxRotation: 0,
                             }
@@ -653,10 +686,10 @@
                 activeRange = rk;
                 document.querySelectorAll('.range-btn').forEach(function (b) {
                     b.style.background = 'transparent';
-                    b.style.color = 'var(--text-dim)';
+                    b.style.color = 'var(--text-muted)';
                 });
-                this.style.background = '#0ECFB3';
-                this.style.color = '#050809';
+                this.style.background = '#16C7B7';
+                this.style.color = '#FFFFFF';
                 renderChart(rk);
             });
         });

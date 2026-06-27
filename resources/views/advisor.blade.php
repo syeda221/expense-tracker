@@ -37,9 +37,16 @@
     @endpush
 
     <div class="advisor-container">
-        <div class="advisor-header fade-in">
-            <h1>Financial Advisor</h1>
-            <p>Ask about budgets, simulate scenarios, or get spending advice</p>
+        <div class="advisor-header fade-in" style="display:flex;align-items:center;gap:16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 24px;box-shadow:var(--shadow-card);margin-bottom:20px">
+            <div class="owl-container" style="flex-shrink:0">
+                <video autoplay loop muted playsinline class="owl-video" id="advisorMascot" style="width:128px;height:128px;margin:-16px 0">
+                    <source id="advisorMascotSource" src="{{ asset('video/Mascot_placing_wing_on_chin_202606242120.mp4') }}" type="video/mp4">
+                </video>
+            </div>
+            <div>
+                <h1 style="font-size:1.5rem;font-weight:700;color:var(--text);margin:0">Financial Advisor</h1>
+                <p style="color:var(--text-muted);margin:4px 0 0;font-size:0.9rem">Ask about budgets, simulate scenarios, or get spending advice.</p>
+            </div>
         </div>
 
         <div class="advisor-messages fade-in" id="chatMessages">
@@ -92,11 +99,27 @@
         div.innerHTML = '<span></span><span></span><span></span>';
         chatMessages.appendChild(div);
         chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        const mascot = document.getElementById('advisorMascot');
+        const source = document.getElementById('advisorMascotSource');
+        if (mascot && source) {
+            source.src = '{{ asset("video/Owl_notices_spending_increase_202606250101.mp4") }}';
+            mascot.load();
+            mascot.play();
+        }
     }
 
     function hideTyping() {
         const el = document.getElementById('typingIndicator');
         if (el) el.remove();
+
+        const mascot = document.getElementById('advisorMascot');
+        const source = document.getElementById('advisorMascotSource');
+        if (mascot && source) {
+            source.src = '{{ asset("video/Mascot_placing_wing_on_chin_202606242120.mp4") }}';
+            mascot.load();
+            mascot.play();
+        }
     }
 
     function sendSuggestion(text) {

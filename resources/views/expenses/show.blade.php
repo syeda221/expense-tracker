@@ -19,16 +19,26 @@
     </div>
 
     @if ($expense->ai_confidence !== null && $expense->ai_confidence < 0.5)
-        <div class="alert-premium alert-error fade-in">
-            <i data-lucide="alert-triangle" style="width:18px;height:18px;flex-shrink:0"></i>
-            <span>Low AI Confidence ({{ number_format($expense->ai_confidence * 100, 0) }}%). <a href="{{ route('expenses.edit', $expense) }}" style="color:var(--danger);font-weight:600">Edit manually</a></span>
+        <div class="alert-premium alert-error fade-in" style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+            <div style="display:flex;align-items:center;gap:12px">
+                <i data-lucide="alert-triangle" style="width:18px;height:18px;flex-shrink:0"></i>
+                <span>Low AI Confidence ({{ number_format($expense->ai_confidence * 100, 0) }}%). <a href="{{ route('expenses.edit', $expense) }}" style="color:var(--danger);font-weight:600">Edit manually</a></span>
+            </div>
+            <video autoplay loop muted playsinline class="owl-video" style="width:86px;height:86px;flex-shrink:0;margin-left:8px;margin-top:-10px;margin-bottom:-10px">
+                <source src="{{ asset('video/Owl_notices_spending_increase_202606250101.mp4') }}" type="video/mp4">
+            </video>
         </div>
     @elseif ($expense->ai_confidence !== null && $expense->ai_confidence >= 0.5)
-        <div class="alert-premium alert-success fade-in">
-            <i data-lucide="check-circle" style="width:18px;height:18px;flex-shrink:0"></i>
-            <span>AI Categorized as <strong>{{ $expense->category }}</strong>
-                @if ($expense->merchant) from <strong>{{ $expense->merchant }}</strong> @endif
-                with {{ number_format($expense->ai_confidence * 100, 0) }}% confidence.</span>
+        <div class="alert-premium alert-success fade-in" style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+            <div style="display:flex;align-items:center;gap:12px">
+                <i data-lucide="check-circle" style="width:18px;height:18px;flex-shrink:0"></i>
+                <span>AI Categorized as <strong>{{ $expense->category }}</strong>
+                    @if ($expense->merchant) from <strong>{{ $expense->merchant }}</strong> @endif
+                    with {{ number_format($expense->ai_confidence * 100, 0) }}% confidence.</span>
+            </div>
+            <video autoplay loop muted playsinline class="owl-video" style="width:86px;height:86px;flex-shrink:0;margin-left:8px;margin-top:-10px;margin-bottom:-10px">
+                <source src="{{ asset('video/Mascot_placing_wing_on_chin_202606242120.mp4') }}" type="video/mp4">
+            </video>
         </div>
     @endif
 

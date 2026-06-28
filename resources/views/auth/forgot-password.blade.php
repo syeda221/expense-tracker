@@ -1,21 +1,42 @@
-<div style="font-size:13px;color:var(--text-muted);margin-bottom:20px;line-height:1.5">Forgot your password? No problem. Let us know your email address and we will email you a password reset link.</div>
-
-<form method="POST" action="{{ route('password.email') }}" class="form-premium">
-    @csrf
-
-    @if (session('status'))
-        <div style="background:var(--success-subtle);border:1px solid rgba(34,197,94,0.2);border-radius:8px;padding:12px;font-size:13px;color:var(--success);margin-bottom:16px">{{ session('status') }}</div>
-    @endif
-
-    <div style="margin-bottom:16px">
-        <label for="email" class="form-label">Email</label>
-        <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autofocus>
-        @error('email')
-            <div class="invalid-feedback">{{ $message }}</div>
-        @enderror
+<x-guest-layout>
+    <div class="login-brand" style="margin-bottom:24px">
+        <div class="login-brand-icon">
+            <i data-lucide="key-round" style="width:22px;height:22px;color:#fff"></i>
+        </div>
+        <h4 class="login-brand-name">Reset Password</h4>
+        <p class="login-brand-tagline">Forgot your password? Enter your email to receive a reset link.</p>
     </div>
 
-    <div style="display:flex;align-items:center;justify-content:flex-end">
-        <button type="submit" class="btn-premium btn-primary">Send Reset Link</button>
-    </div>
-</form>
+    <form method="POST" action="{{ route('password.email') }}" class="form-premium">
+        @csrf
+
+        @if (session('status'))
+            <div class="login-alert login-alert-success fade-in">{{ session('status') }}</div>
+        @endif
+
+        <div class="login-field">
+            <label for="email" class="form-label">Email</label>
+            <div class="input-group">
+                <span class="input-group-text">
+                    <i data-lucide="mail" style="width:16px;height:16px"></i>
+                </span>
+                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autofocus placeholder="you@example.com">
+            </div>
+            @error('email')
+                <div class="invalid-feedback d-block">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="login-field">
+            <button type="submit" class="btn-premium btn-primary" style="width:100%;justify-content:center;padding:12px 24px">
+                <i data-lucide="send" style="width:17px;height:17px"></i>
+                Send Reset Link
+            </button>
+        </div>
+
+        <div class="login-divider">
+            <span>Remember your password? </span>
+            <a href="{{ route('login') }}">Log in</a>
+        </div>
+    </form>
+</x-guest-layout>

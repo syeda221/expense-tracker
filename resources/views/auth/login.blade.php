@@ -105,13 +105,10 @@
         lucide.createIcons();
     }
 
-    document.getElementById('signinBtn').addEventListener('click', function(e) {
-        const form = document.getElementById('loginForm');
-        if (form.checkValidity()) {
-            this.querySelector('.btn-text').textContent = 'Signing in...';
-            this.querySelector('.btn-loader').style.display = 'flex';
-            this.disabled = true;
-        }
+    document.getElementById('loginForm').addEventListener('submit', function() {
+        const btn = document.getElementById('signinBtn');
+        btn.querySelector('.btn-text').textContent = 'Signing in...';
+        btn.querySelector('.btn-loader').style.display = 'flex';
     });
     </script>
     @endpush

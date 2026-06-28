@@ -1,11 +1,11 @@
 <x-app-layout>
     @push('styles')
     <style>
-        .advisor-container { max-width: 900px; margin: 0 auto; padding: 24px 0; display: flex; flex-direction: column; height: calc(100vh - 120px); }
+        .advisor-container { max-width: 900px; margin: 0 auto; padding: 24px 0; display: flex; flex-direction: column; }
         .advisor-header { margin-bottom: 20px; }
         .advisor-header h1 { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); margin: 0; }
         .advisor-header p { color: var(--text-dim); margin: 4px 0 0; font-size: 0.9rem; }
-        .advisor-messages { flex: 1; overflow-y: auto; padding: 8px 0; display: flex; flex-direction: column; gap: 12px; scroll-behavior: smooth; }
+        .advisor-messages { min-height: 400px; max-height: 500px; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; scroll-behavior: smooth; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); }
         .advisor-messages::-webkit-scrollbar { width: 4px; }
         .advisor-messages::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 4px; }
         .msg { max-width: 85%; padding: 12px 16px; border-radius: 12px; line-height: 1.6; font-size: 0.9rem; animation: msgIn 0.25s ease-out; white-space: pre-wrap; word-wrap: break-word; }
@@ -37,15 +37,20 @@
     @endpush
 
     <div class="advisor-container">
-        <div class="advisor-header fade-in" style="display:flex;align-items:center;gap:16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 24px;box-shadow:var(--shadow-card);margin-bottom:20px">
-            <div class="owl-container" style="flex-shrink:0">
-                <video autoplay loop muted playsinline class="owl-video" id="advisorMascot" style="width:128px;height:128px;margin:-16px 0">
+        <div class="advisor-header fade-in" style="position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:140px 24px 40px;box-shadow:var(--shadow-card);margin-top:80px;margin-bottom:32px;overflow:visible;">
+            
+            <div class="owl-container" style="position:absolute;top:-80px;left:50%;transform:translateX(-50%);z-index:3;width:180px;height:220px;display:flex;align-items:flex-end;justify-content:center;pointer-events:none;">
+                <!-- Soft radial glow behind mascot -->
+                <div style="position:absolute;bottom:20px;width:200px;height:200px;background:radial-gradient(circle, rgba(22,199,183,0.15) 0%, rgba(22,199,183,0) 70%);border-radius:50%;z-index:-1;"></div>
+                
+                <video autoplay loop muted playsinline class="owl-video" id="advisorMascot" style="width:100%;height:100%;object-fit:cover;object-position:bottom;pointer-events:auto;">
                     <source id="advisorMascotSource" src="{{ asset('video/Mascot_placing_wing_on_chin_202606242120.mp4') }}" type="video/mp4">
                 </video>
             </div>
-            <div>
-                <h1 style="font-size:1.5rem;font-weight:700;color:var(--text);margin:0">Financial Advisor</h1>
-                <p style="color:var(--text-muted);margin:4px 0 0;font-size:0.9rem">Ask about budgets, simulate scenarios, or get spending advice.</p>
+
+            <div style="position:relative;z-index:2">
+                <h1 style="font-size:32px;font-weight:800;letter-spacing:-0.02em;color:var(--text);margin:0">Financial Advisor</h1>
+                <p style="color:var(--text-muted);margin:12px auto 0;font-size:16px;line-height:1.6;max-width:400px">Ask about budgets, simulate scenarios,<br>or get personalized spending advice.</p>
             </div>
         </div>
 

@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BudgetAlertSent extends Model
 {
+    protected $table = 'budget_alerts_sent';
+
     protected $fillable = [
         'user_id',
         'budget_id',

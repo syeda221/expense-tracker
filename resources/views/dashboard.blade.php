@@ -5,16 +5,21 @@
         $highestCatName = $categoryDistribution->isNotEmpty() ? $categoryDistribution->first()->category : 'N/A';
     @endphp
 
-    <div class="page-header fade-in" style="display:flex;align-items:center;justify-content:between;gap:24px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;box-shadow:var(--shadow-card);margin-bottom:28px">
-        <div style="flex:1">
-            <h1 class="page-title" style="margin:0;font-size:24px">Good {{ now()->hour < 12 ? 'morning' : (now()->hour < 17 ? 'afternoon' : 'evening') }}, {{ Auth::user()->name }}! 👋</h1>
-            <p class="page-subtitle" style="margin:4px 0 0;font-size:14px;color:var(--text-muted)">Here's your financial overview for {{ now()->format('F Y') }}.</p>
-        </div>
-        <div class="owl-container" style="position:relative;flex-shrink:0">
-            <video autoplay loop muted playsinline class="owl-video" style="width:140px;height:140px;margin:-16px 0;">
+    <div class="page-header fade-in" style="position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:140px 24px 40px;box-shadow:var(--shadow-card);margin-top:80px;margin-bottom:40px;overflow:visible;">
+        <div class="owl-container" style="position:absolute;top:-80px;left:50%;transform:translateX(-50%);z-index:3;width:200px;height:240px;display:flex;align-items:flex-end;justify-content:center;pointer-events:none;">
+            <!-- Soft radial glow behind mascot -->
+            <div style="position:absolute;bottom:20px;width:240px;height:240px;background:radial-gradient(circle, rgba(22,199,183,0.15) 0%, rgba(22,199,183,0) 70%);border-radius:50%;z-index:-1;"></div>
+            
+            <video autoplay loop muted playsinline class="owl-video" style="width:100%;height:100%;object-fit:cover;object-position:bottom;pointer-events:auto;">
                 <source src="{{ asset('video/Mascot_placing_wing_on_chin_202606242120.mp4') }}" type="video/mp4">
             </video>
-            <div style="position:absolute;top:-4px;right:-4px;background:var(--primary);color:#fff;font-size:8px;font-weight:700;padding:1px 5px;border-radius:20px;box-shadow:0 2px 4px rgba(0,0,0,0.1);white-space:nowrap">AI Active</div>
+            
+            <div style="position:absolute;top:40px;right:-10px;background:var(--primary);color:#fff;font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px;box-shadow:0 4px 12px rgba(22,199,183,0.3);white-space:nowrap;transform:rotate(5deg);pointer-events:auto;">AI Active</div>
+        </div>
+
+        <div style="position:relative;z-index:2">
+            <h1 class="page-title" style="margin:0;font-size:32px;font-weight:800;letter-spacing:-0.02em;">Good {{ now()->hour < 12 ? 'morning' : (now()->hour < 17 ? 'afternoon' : 'evening') }}, {{ Auth::user()->name }}!</h1>
+            <p class="page-subtitle" style="margin:12px auto 0;font-size:16px;color:var(--text-muted);line-height:1.6;max-width:400px;">I've got your financial overview ready.<br>Let's make it a great day!</p>
         </div>
     </div>
 
@@ -323,28 +328,46 @@
                             </div>
                         </div>
                         @if ($pct >= 100)
-                            <div style="margin-top:12px;padding:12px 14px;background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15);border-radius:8px;display:flex;align-items:center;justify-content:space-between;gap:12px">
-                                <div style="flex:1">
-                                    <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:var(--danger)">⚠️ Overspending Alert</p>
-                                    <p style="margin:0;font-size:12px;color:var(--text-muted)">You have exceeded your monthly budget by {{ number_format($pct - 100, 0) }}%!</p>
+                            <div style="margin-top:24px;display:flex;align-items:flex-end;gap:16px;">
+                                <!-- Mascot with glow -->
+                                <div class="owl-container" style="position:relative;width:120px;height:120px;flex-shrink:0;">
+                                    <div style="position:absolute;bottom:0;width:120px;height:120px;background:radial-gradient(circle, rgba(239,68,68,0.2) 0%, rgba(239,68,68,0) 70%);border-radius:50%;z-index:-1;"></div>
+                                    <video autoplay loop muted playsinline class="owl-video" style="width:100%;height:100%;object-fit:cover;object-position:bottom;">
+                                        <source src="{{ asset('video/Owl_notices_spending_increase_202606250101.mp4') }}" type="video/mp4">
+                                    </video>
                                 </div>
-                                <video autoplay loop muted playsinline class="owl-video" style="width:96px;height:96px;flex-shrink:0;margin:-10px 0">
-                                    <source src="{{ asset('video/Owl_notices_spending_increase_202606250101.mp4') }}" type="video/mp4">
-                                </video>
+                                
+                                <!-- Speech bubble message -->
+                                <div style="position:relative;flex:1;background:var(--bg-card);border:1px solid rgba(239,68,68,0.3);border-radius:16px;border-bottom-left-radius:4px;padding:16px;box-shadow:0 4px 12px rgba(239,68,68,0.08);">
+                                    <!-- Speech bubble pointer -->
+                                    <div style="position:absolute;bottom:20px;left:-6px;width:12px;height:12px;background:var(--bg-card);border-left:1px solid rgba(239,68,68,0.3);border-bottom:1px solid rgba(239,68,68,0.3);transform:rotate(45deg);"></div>
+                                    
+                                    <p style="margin:0 0 6px;font-size:14px;font-weight:800;color:var(--danger)">⚠️ Budget Hit!</p>
+                                    <p style="margin:0;font-size:13px;color:var(--text-muted);line-height:1.5">You have exceeded your monthly budget by <strong style="color:var(--danger)">{{ number_format($pct - 100, 0) }}%</strong>.</p>
+                                </div>
                             </div>
                         @endif
 
                         @if (!empty($budgetSummary['alerts']))
-                            <div style="margin-top:12px;padding:12px 14px;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.15);border-radius:8px;display:flex;align-items:center;justify-content:space-between;gap:12px">
-                                <div style="flex:1">
-                                    <p style="margin:0 0 6px;font-size:12px;font-weight:700;color:var(--warning)">⚠️ Budget Alerts</p>
+                            <div style="margin-top:24px;display:flex;align-items:flex-end;gap:16px;">
+                                <!-- Mascot with glow -->
+                                <div class="owl-container" style="position:relative;width:120px;height:120px;flex-shrink:0;">
+                                    <div style="position:absolute;bottom:0;width:120px;height:120px;background:radial-gradient(circle, rgba(245,158,11,0.2) 0%, rgba(245,158,11,0) 70%);border-radius:50%;z-index:-1;"></div>
+                                    <video autoplay loop muted playsinline class="owl-video" style="width:100%;height:100%;object-fit:cover;object-position:bottom;">
+                                        <source src="{{ asset('video/Owl_notices_spending_increase_202606250101.mp4') }}" type="video/mp4">
+                                    </video>
+                                </div>
+                                
+                                <!-- Speech bubble message -->
+                                <div style="position:relative;flex:1;background:var(--bg-card);border:1px solid rgba(245,158,11,0.4);border-radius:16px;border-bottom-left-radius:4px;padding:16px;box-shadow:0 4px 12px rgba(245,158,11,0.08);">
+                                    <!-- Speech bubble pointer -->
+                                    <div style="position:absolute;bottom:20px;left:-6px;width:12px;height:12px;background:var(--bg-card);border-left:1px solid rgba(245,158,11,0.4);border-bottom:1px solid rgba(245,158,11,0.4);transform:rotate(45deg);"></div>
+                                    
+                                    <p style="margin:0 0 6px;font-size:14px;font-weight:800;color:var(--warning)">⚠️ Category Budget Warning</p>
                                     @foreach ($budgetSummary['alerts'] as $alert)
-                                        <p style="margin:0 0 2px;font-size:12px;color:var(--text-muted)">{{ $alert['label'] }}: {{ $alert['percentage'] }}% used</p>
+                                        <p style="margin:0 0 4px;font-size:13px;color:var(--text-muted);line-height:1.5"><strong>{{ $alert['label'] }}</strong>: {{ $alert['percentage'] }}% used.</p>
                                     @endforeach
                                 </div>
-                                <video autoplay loop muted playsinline class="owl-video" style="width:96px;height:96px;flex-shrink:0;margin:-10px 0">
-                                    <source src="{{ asset('video/Owl_notices_spending_increase_202606250101.mp4') }}" type="video/mp4">
-                                </video>
                             </div>
                         @endif
                     </div>

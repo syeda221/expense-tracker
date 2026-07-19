@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
     /* ── New design tokens (user's system) ── */
@@ -11,8 +11,8 @@
     --negative:     #EF4444;
     --info:         #3B82F6;
 
-    --font-display: 'Space Grotesk', sans-serif;
-    --font-body:    'DM Sans', sans-serif;
+    --font-display: 'Plus Jakarta Sans', sans-serif;
+    --font-body:    'Plus Jakarta Sans', sans-serif;
     --font-mono:    'JetBrains Mono', monospace;
 
     /* ── Old variable names (backward compat with Blade) ── */
@@ -89,7 +89,12 @@ h1, h2, h3, h4, h5, h6,
 }
 
 .stat-value, .expense-amount, .metric, .amount,
-.stat-card-value, .amount-cell,
+.stat-card-value, .amount-cell {
+    font-family: var(--font-display);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.5px;
+}
+
 .font-mono, code, pre {
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
@@ -646,7 +651,7 @@ body {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    font-family: var(--font-mono);
+    font-family: var(--font-display);
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.5px;
 }

@@ -5,35 +5,39 @@
         $highestCatName = $categoryDistribution->isNotEmpty() ? $categoryDistribution->first()->category : 'N/A';
     @endphp
 
-    <div class="page-header fade-in" style="position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:140px 24px 40px;box-shadow:var(--shadow-card);margin-top:80px;margin-bottom:40px;overflow:visible;">
-        <div class="owl-container" style="position:absolute;top:-80px;left:50%;transform:translateX(-50%);z-index:3;width:200px;height:240px;display:flex;align-items:flex-end;justify-content:center;pointer-events:none;">
+    <div class="page-header fade-in" style="position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;background:transparent;border:none;padding:180px 24px 20px;margin-top:40px;margin-bottom:20px;overflow:visible;">
+        <div class="owl-container" style="position:absolute;top:-80px;left:50%;transform:translateX(-50%);z-index:3;width:240px;height:240px;display:flex;align-items:flex-end;justify-content:center;pointer-events:none;">
             <!-- Soft radial glow behind mascot -->
-            <div style="position:absolute;bottom:20px;width:240px;height:240px;background:radial-gradient(circle, rgba(22,199,183,0.15) 0%, rgba(22,199,183,0) 70%);border-radius:50%;z-index:-1;"></div>
+            <div style="position:absolute;bottom:20px;width:300px;height:300px;background:radial-gradient(circle, rgba(22,199,183,0.2) 0%, rgba(22,199,183,0) 70%);border-radius:50%;z-index:-1;"></div>
             
-            <video autoplay loop muted playsinline class="owl-video" style="width:100%;height:100%;object-fit:cover;object-position:bottom;pointer-events:auto;">
+            <video autoplay loop muted playsinline class="owl-video" style="width:100%;height:100%;object-fit:cover;object-position:bottom;pointer-events:auto;mix-blend-mode:darken;-webkit-mask-image:radial-gradient(circle at center 60%, black 50%, transparent 80%);mask-image:radial-gradient(circle at center 60%, black 50%, transparent 80%);">
                 <source src="{{ asset('video/Mascot_placing_wing_on_chin_202606242120.mp4') }}" type="video/mp4">
             </video>
             
-            <div style="position:absolute;top:40px;right:-10px;background:var(--primary);color:#fff;font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px;box-shadow:0 4px 12px rgba(22,199,183,0.3);white-space:nowrap;transform:rotate(5deg);pointer-events:auto;">AI Active</div>
+            <div style="position:absolute;top:40px;right:0px;background:var(--primary);color:#fff;font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px;box-shadow:0 4px 12px rgba(22,199,183,0.3);white-space:nowrap;transform:rotate(5deg);pointer-events:auto;">AI Active</div>
         </div>
 
         <div style="position:relative;z-index:2">
             <h1 class="page-title" style="margin:0;font-size:32px;font-weight:800;letter-spacing:-0.02em;">Good {{ now()->hour < 12 ? 'morning' : (now()->hour < 17 ? 'afternoon' : 'evening') }}, {{ Auth::user()->name }}!</h1>
             <p class="page-subtitle" style="margin:12px auto 0;font-size:16px;color:var(--text-muted);line-height:1.6;max-width:400px;">I've got your financial overview ready.<br>Let's make it a great day!</p>
+            <div style="margin-top: 24px;">
+                <a href="{{ route('expenses.create') }}" class="btn-premium btn-primary" style="padding: 10px 24px; font-weight: 600;">+ Add Expense</a>
+            </div>
         </div>
     </div>
 
-    <div class="dashboard-stats fade-in-up stagger-1">
-        <div class="card-premium hover-lift">
-            <div class="card-body">
+    <div class="dashboard-stats fade-in-up stagger-1" style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 24px;">
+        <div class="card-premium hover-lift" style="background: var(--primary); color: white; border: none; overflow: hidden; position: relative;">
+            <div style="position:absolute; top:-20px; right:-20px; width:100px; height:100px; background:rgba(255,255,255,0.1); border-radius:50%;"></div>
+            <div class="card-body" style="position:relative; z-index:1;">
                 <div class="stat-card">
-                    <div class="stat-card-icon" style="background:var(--primary-subtle);color:var(--primary)">
+                    <div class="stat-card-icon" style="background:rgba(255,255,255,0.2);color:white">
                         <i data-lucide="wallet"></i>
                     </div>
                     <div class="stat-card-content">
-                        <p class="stat-card-label">Total Expenses</p>
-                        <h3 class="stat-card-value" style="color:var(--primary)">RS {{ number_format($yearlyTotal, 2) }}</h3>
-                        <span class="stat-card-change {{ $monthlyChange >= 0 ? 'up' : 'down' }}">
+                        <p class="stat-card-label" style="color:rgba(255,255,255,0.8)">Total Expenses</p>
+                        <h3 class="stat-card-value" style="color:white">RS {{ number_format($yearlyTotal, 2) }}</h3>
+                        <span class="stat-card-change" style="background:rgba(255,255,255,0.15); color:white; border:none;">
                             <i data-lucide="{{ $monthlyChange >= 0 ? 'trending-up' : 'trending-down' }}" style="width:14px;height:14px"></i>
                             {{ number_format(abs($monthlyChange), 1) }}% vs last month
                         </span>
@@ -86,45 +90,15 @@
                 </div>
             </div>
         </div>
-
-        <div class="card-premium hover-lift">
-            <div class="card-body">
-                <div class="stat-card">
-                    <div class="stat-card-icon" style="background:var(--primary-subtle);color:var(--primary)">
-                        <i data-lucide="repeat"></i>
-                    </div>
-                    <div class="stat-card-content">
-                        <p class="stat-card-label">Recurring</p>
-                        <h3 class="stat-card-value" style="color:var(--primary)">{{ $recurringCount }}</h3>
-                        <span class="stat-card-change neutral">Active subscriptions</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card-premium hover-lift">
-            <div class="card-body">
-                <div class="stat-card">
-                    <div class="stat-card-icon" style="background:var(--danger-subtle);color:var(--danger)">
-                        <i data-lucide="clock"></i>
-                    </div>
-                    <div class="stat-card-content">
-                        <p class="stat-card-label">Latest Today</p>
-                        <h3 class="stat-card-value" style="color:var(--danger)">RS {{ number_format($todayTotal, 2) }}</h3>
-                        <span class="stat-card-change neutral">{{ $todayCount }} transactions</span>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
-    <div class="dashboard-charts-top fade-in-up stagger-3" style="margin-top:24px">
+    <div class="dashboard-grid fade-in-up stagger-3" style="display:grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px;">
         <div class="card-premium">
             <div class="card-header">
                 <div class="widget-header" style="margin-bottom:0">
                     <h5 class="widget-title">
                         <i data-lucide="bar-chart-3"></i>
-                        Monthly Spending — {{ now()->year }}
+                        Spending Analytics — {{ now()->year }}
                     </h5>
                     <a href="{{ route('expenses.index') }}" class="widget-action">View all</a>
                 </div>
@@ -153,7 +127,7 @@
         </div>
     </div>
 
-    <div class="dashboard-widgets fade-in-up stagger-4" style="margin-top:24px">
+    <div class="dashboard-widgets fade-in-up stagger-4" style="display:grid; grid-template-columns: 1fr 2fr; gap: 24px; margin-bottom: 24px;">
         <div class="card-premium">
             <div class="card-header">
                 <div class="widget-header" style="margin-bottom:0">
@@ -173,9 +147,9 @@
                                 <span style="font-size:13px;font-weight:600;color:var(--text)">{{ $cat->category }}</span>
                                 <span style="font-size:12px;color:var(--text-dim)">RS {{ number_format($cat->total, 2) }} · {{ number_format($pct, 1) }}%</span>
                             </div>
-                            <div class="progress-premium">
+                            <div class="progress-premium" style="height: 10px; border-radius: 5px;">
                                 <div class="progress-bar"
-                                     style="width:{{ $pct }}%;background:{{ ['#0ECFB3','#0AA896','#38C8F5','#23D97A','#FFB547','#FF5E6C','#3B82F6','#EC4899'][$loop->index % 8] }}">
+                                     style="width:{{ $pct }}%; border-radius: 5px; background:{{ ['#0ECFB3','#0AA896','#38C8F5','#23D97A','#FFB547','#FF5E6C','#3B82F6','#EC4899'][$loop->index % 8] }}">
                                 </div>
                             </div>
                         </div>
@@ -213,7 +187,7 @@
             <div class="card-body" style="padding:0">
                 @if ($recentExpenses->isNotEmpty())
                     <div style="padding:0">
-                        @foreach ($recentExpenses as $expense)
+                        @foreach ($recentExpenses->take(5) as $expense)
                             <a href="{{ route('expenses.show', $expense) }}" style="display:flex;align-items:center;gap:12px;padding:14px 20px;text-decoration:none;transition:background var(--transition-fast);border-bottom:1px solid var(--border-light)">
                                 <div style="width:36px;height:36px;border-radius:10px;background:var(--bg-hover);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--text-dim)">
                                     @switch($expense->category)

@@ -124,7 +124,7 @@ class AdvisorController extends Controller
             'weekly_summary' => $this->analytics->getWeeklySummary($user->id),
             'monthly_progress' => $this->analytics->getMonthlyProgress($user->id),
             'budgets' => Budget::where('user_id', $user->id)->get()->map(function($b) {
-                return ['category' => $b->category, 'amount' => $b->amount];
+                return ['category' => $b->category ?? 'Overall', 'amount' => $b->amount];
             })->toArray(),
         ];
         

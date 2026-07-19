@@ -32,7 +32,7 @@
                     </div>
                     <div class="stat-card-content">
                         <p class="stat-card-label">Total Expenses</p>
-                        <h3 class="stat-card-value" style="color:var(--primary)">${{ number_format($yearlyTotal, 2) }}</h3>
+                        <h3 class="stat-card-value" style="color:var(--primary)">RS {{ number_format($yearlyTotal, 2) }}</h3>
                         <span class="stat-card-change {{ $monthlyChange >= 0 ? 'up' : 'down' }}">
                             <i data-lucide="{{ $monthlyChange >= 0 ? 'trending-up' : 'trending-down' }}" style="width:14px;height:14px"></i>
                             {{ number_format(abs($monthlyChange), 1) }}% vs last month
@@ -50,7 +50,7 @@
                     </div>
                     <div class="stat-card-content">
                         <p class="stat-card-label">Monthly Spending</p>
-                        <h3 class="stat-card-value" style="color:var(--secondary)">${{ number_format($monthlyTotal, 2) }}</h3>
+                        <h3 class="stat-card-value" style="color:var(--secondary)">RS {{ number_format($monthlyTotal, 2) }}</h3>
                         <span class="stat-card-change neutral">{{ $monthlyCount }} transactions</span>
                     </div>
                 </div>
@@ -65,7 +65,7 @@
                     </div>
                     <div class="stat-card-content">
                         <p class="stat-card-label">Highest Category</p>
-                        <h3 class="stat-card-value" style="color:var(--warning)">${{ number_format($highestCatTotal, 2) }}</h3>
+                        <h3 class="stat-card-value" style="color:var(--warning)">RS {{ number_format($highestCatTotal, 2) }}</h3>
                         <span class="stat-card-change neutral">{{ $highestCatName }}</span>
                     </div>
                 </div>
@@ -110,7 +110,7 @@
                     </div>
                     <div class="stat-card-content">
                         <p class="stat-card-label">Latest Today</p>
-                        <h3 class="stat-card-value" style="color:var(--danger)">${{ number_format($todayTotal, 2) }}</h3>
+                        <h3 class="stat-card-value" style="color:var(--danger)">RS {{ number_format($todayTotal, 2) }}</h3>
                         <span class="stat-card-change neutral">{{ $todayCount }} transactions</span>
                     </div>
                 </div>
@@ -171,7 +171,7 @@
                         <div style="margin-bottom:16px">
                             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
                                 <span style="font-size:13px;font-weight:600;color:var(--text)">{{ $cat->category }}</span>
-                                <span style="font-size:12px;color:var(--text-dim)">${{ number_format($cat->total, 2) }} · {{ number_format($pct, 1) }}%</span>
+                                <span style="font-size:12px;color:var(--text-dim)">RS {{ number_format($cat->total, 2) }} · {{ number_format($pct, 1) }}%</span>
                             </div>
                             <div class="progress-premium">
                                 <div class="progress-bar"
@@ -244,7 +244,7 @@
                                     </div>
                                 </div>
                                 <div style="text-align:right;flex-shrink:0">
-                                    <div style="font-size:15px;font-weight:700;color:var(--text)">${{ number_format($expense->amount, 2) }}</div>
+                                    <div style="font-size:15px;font-weight:700;color:var(--text)">RS {{ number_format($expense->amount, 2) }}</div>
                                     <span class="badge-premium category" style="font-size:10px">{{ $expense->category }}</span>
                                 </div>
                             </a>
@@ -312,19 +312,19 @@
                         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
                             <div style="padding:12px;background:var(--bg-hover);border-radius:8px">
                                 <p style="margin:0 0 2px;font-size:11px;color:var(--text-dim)">Budget</p>
-                                <p style="margin:0;font-size:18px;font-weight:700;color:var(--text);font-family:var(--font-mono)">${{ number_format($budget, 2) }}</p>
+                                <p style="margin:0;font-size:18px;font-weight:700;color:var(--text);font-family:var(--font-mono)">RS {{ number_format($budget, 2) }}</p>
                             </div>
                             <div style="padding:12px;background:var(--bg-hover);border-radius:8px">
                                 <p style="margin:0 0 2px;font-size:11px;color:var(--text-dim)">Spent</p>
-                                <p style="margin:0;font-size:18px;font-weight:700;color:var(--primary);font-family:var(--font-mono)">${{ number_format($spent, 2) }}</p>
+                                <p style="margin:0;font-size:18px;font-weight:700;color:var(--primary);font-family:var(--font-mono)">RS {{ number_format($spent, 2) }}</p>
                             </div>
                             <div style="padding:12px;background:var(--bg-hover);border-radius:8px">
                                 <p style="margin:0 0 2px;font-size:11px;color:var(--text-dim)">Remaining</p>
-                                <p style="margin:0;font-size:18px;font-weight:700;color:{{ $remaining > 0 ? 'var(--positive)' : 'var(--negative)' }};font-family:var(--font-mono)">${{ number_format($remaining, 2) }}</p>
+                                <p style="margin:0;font-size:18px;font-weight:700;color:{{ $remaining > 0 ? 'var(--positive)' : 'var(--negative)' }};font-family:var(--font-mono)">RS {{ number_format($remaining, 2) }}</p>
                             </div>
                             <div style="padding:12px;background:var(--bg-hover);border-radius:8px">
                                 <p style="margin:0 0 2px;font-size:11px;color:var(--text-dim)">Daily Budget</p>
-                                <p style="margin:0;font-size:18px;font-weight:700;color:var(--text);font-family:var(--font-mono)">${{ number_format($overall['daily_budget'] ?? 0, 2) }}</p>
+                                <p style="margin:0;font-size:18px;font-weight:700;color:var(--text);font-family:var(--font-mono)">RS {{ number_format($overall['daily_budget'] ?? 0, 2) }}</p>
                             </div>
                         </div>
                         @if ($pct >= 100)
@@ -414,15 +414,15 @@
                 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 24px 0;border:1px solid var(--border);border-radius:12px;overflow:hidden">
                     <div style="padding:14px 16px;border-right:1px solid var(--border-light)">
                         <p style="margin:0 0 2px;font-size:11px;color:var(--text-dim);font-weight:500;letter-spacing:0.3px">TOTAL SPENT</p>
-                        <p style="margin:0;font-size:19px;font-weight:800;color:var(--success);font-variant-numeric:tabular-nums" id="kpiTotal">${{ number_format($monthlyTotal, 2) }}</p>
+                        <p style="margin:0;font-size:19px;font-weight:800;color:var(--success);font-variant-numeric:tabular-nums" id="kpiTotal">RS {{ number_format($monthlyTotal, 2) }}</p>
                     </div>
                     <div style="padding:14px 16px;border-right:1px solid var(--border-light)">
                         <p style="margin:0 0 2px;font-size:11px;color:var(--text-dim);font-weight:500;letter-spacing:0.3px">DAILY AVG</p>
-                        <p style="margin:0;font-size:19px;font-weight:800;color:var(--secondary);font-variant-numeric:tabular-nums" id="kpiAvg">${{ number_format($avgPerDay, 2) }}</p>
+                        <p style="margin:0;font-size:19px;font-weight:800;color:var(--secondary);font-variant-numeric:tabular-nums" id="kpiAvg">RS {{ number_format($avgPerDay, 2) }}</p>
                     </div>
                     <div style="padding:14px 16px;border-right:1px solid var(--border-light)">
                         <p style="margin:0 0 2px;font-size:11px;color:var(--text-dim);font-weight:500;letter-spacing:0.3px">PROJECTED</p>
-                        <p style="margin:0;font-size:19px;font-weight:800;color:var(--warning);font-variant-numeric:tabular-nums" id="kpiProjected">${{ number_format($projectedTotal, 2) }}</p>
+                        <p style="margin:0;font-size:19px;font-weight:800;color:var(--warning);font-variant-numeric:tabular-nums" id="kpiProjected">RS {{ number_format($projectedTotal, 2) }}</p>
                     </div>
                     <div style="padding:14px 16px">
                         <p style="margin:0 0 2px;font-size:11px;color:var(--text-dim);font-weight:500;letter-spacing:0.3px">BUDGET USED</p>

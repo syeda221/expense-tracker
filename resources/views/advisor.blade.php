@@ -143,18 +143,19 @@
         showTyping();
 
         try {
-            const resp = await fetch('{{ route('advisor.chat') }}', {
+            const resp = await fetch('/api/advisor/ask', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('input[name=_token]').value,
                 },
-                body: JSON.stringify({ message }),
+                body: JSON.stringify({ question: message }),
             });
 
             hideTyping();
             const data = await resp.json();
-            addMessage(data.reply || 'Sorry, I could not process that.', data.type || 'assistant');
+            const reply = data.response || data.message || 'Sorry, I could not process that.';
+            addMessage(reply, data.type || 'assistant');
         } catch (err) {
             hideTyping();
             addMessage('Connection error. Please try again.', 'help');

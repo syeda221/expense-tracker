@@ -62,7 +62,7 @@
                             </td>
                             <td style="font-size:13px;color:var(--text-muted)">{{ $expense->merchant ?? '—' }}</td>
                             <td style="font-size:13px;color:var(--text-muted)">{{ $expense->payment_method }}</td>
-                            <td class="amount-cell">${{ number_format($expense->amount, 2) }}</td>
+                            <td class="amount-cell">RS {{ number_format($expense->amount, 2) }}</td>
                             <td style="text-align:center">
                                 @if ($expense->ai_confidence !== null)
                                     @if ($expense->ai_confidence >= 0.8)

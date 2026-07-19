@@ -99,6 +99,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::view('/advisor', 'advisor')->name('advisor');
     Route::post('/advisor/chat', App\Http\Controllers\FinancialAdvisorController::class)->name('advisor.chat');
+
+    // New AI Advisor Module Routes
+    Route::get('/api/advisor/weekly-summary', [\App\Http\Controllers\API\AdvisorController::class, 'getWeeklySummary']);
+    Route::post('/api/advisor/ask', [\App\Http\Controllers\API\AdvisorController::class, 'ask'])->middleware('throttle:20,1');
 });
 
 require __DIR__.'/auth.php';

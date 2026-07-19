@@ -65,15 +65,15 @@ class FinancialAdvisorService
         }
 
         $response = "📊 {$status['label']} Budget for {$status['period']}:\n";
-        $response .= "Budget: PKR {$status['budget']} | Spent: PKR {$status['spent']} | Remaining: PKR {$status['remaining']}\n";
+        $response .= "Budget: RS {$status['budget']} | Spent: RS {$status['spent']} | Remaining: RS {$status['remaining']}\n";
         $response .= "Used: {$status['percentage']}% | Days left: {$status['days_left']}";
 
         if ($status['daily_budget'] > 0) {
-            $response .= " | Daily budget: PKR {$status['daily_budget']}";
+            $response .= " | Daily budget: RS {$status['daily_budget']}";
         }
 
         if ($status['overspent'] > 0) {
-            $response .= "\n⚠️ Overspent by PKR {$status['overspent']}!";
+            $response .= "\n⚠️ Overspent by RS {$status['overspent']}!";
         }
 
         return [
@@ -156,7 +156,7 @@ class FinancialAdvisorService
 
     private function callGroqForAdvice(array $summary): string
     {
-        $prompt = "You are a financial advisor assistant for a Pakistani user. All amounts are in PKR (Pakistani Rupees). Use ONLY the numbers in the provided JSON data below. Never invent or calculate. Always use 'PKR' as the currency symbol, never use '$'. Just explain the financial situation in 2-4 clear sentences.\n\nData: " . json_encode($summary);
+        $prompt = "You are a financial advisor assistant for a Pakistani user. All amounts are in RS (Pakistani Rupees). Use ONLY the numbers in the provided JSON data below. Never invent or calculate. Always use 'RS' as the currency symbol, never use '$'. Just explain the financial situation in 2-4 clear sentences.\n\nData: " . json_encode($summary);
 
         return $this->groqService->ask($prompt, 0.3, 512);
     }
@@ -167,23 +167,23 @@ class FinancialAdvisorService
 
         if ($data['budget'] > 0 && $data['spent'] > $data['budget']) {
             $overspent = $data['spent'] - $data['budget'];
-            $lines[] = "⚠️ You've exceeded your PKR {$data['budget']} budget — you're PKR {$overspent} over.";
+            $lines[] = "⚠️ You've exceeded your RS {$data['budget']} budget — you're RS {$overspent} over.";
         } elseif ($data['budget'] > 0) {
             $remaining = $data['budget'] - $data['spent'];
-            $lines[] = "✅ You're within budget with PKR {$remaining} remaining (PKR {$data['budget']} total).";
+            $lines[] = "✅ You're within budget with RS {$remaining} remaining (RS {$data['budget']} total).";
         }
 
         if ($data['top_category'] !== 'N/A') {
-            $lines[] = "Your top spending category is {$data['top_category']} (PKR {$data['top_category_amount']}).";
+            $lines[] = "Your top spending category is {$data['top_category']} (RS {$data['top_category_amount']}).";
         }
 
         if ($data['previous_month'] > 0) {
             $change = $data['change_vs_last_month'];
             $direction = $change > 0 ? 'up' : 'down';
-            $lines[] = "Spending is {$direction} " . number_format(abs($change), 1) . "% vs last month (PKR {$data['previous_month']}).";
+            $lines[] = "Spending is {$direction} " . number_format(abs($change), 1) . "% vs last month (RS {$data['previous_month']}).";
         }
 
-        $lines[] = "Your daily average is PKR {$data['avg_daily']}, projecting to PKR {$data['projection']} by month end.";
+        $lines[] = "Your daily average is RS {$data['avg_daily']}, projecting to RS {$data['projection']} by month end.";
 
         return implode("\n", $lines);
     }

@@ -49,7 +49,7 @@
                     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px">
                         <div>
                             <h1 style="font-size:42px;font-weight:800;letter-spacing:-0.03em;margin:0 0 4px;background:linear-gradient(135deg,var(--text),var(--text-muted));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">
-                                ${{ number_format($expense->amount, 2) }}
+                                RS {{ number_format($expense->amount, 2) }}
                             </h1>
                             <p style="color:var(--text-muted);font-size:14px;margin:0;display:flex;align-items:center;gap:12px">
                                 <span style="display:flex;align-items:center;gap:4px"><i data-lucide="calendar" style="width:14px;height:14px"></i> {{ $expense->expense_date->format('F d, Y') }}</span>

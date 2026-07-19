@@ -16,7 +16,7 @@ class GroqService implements AIServiceInterface
     public function __construct()
     {
         $this->apiKey = config('ai.providers.groq.api_key');
-        $this->model = config('ai.providers.groq.model', 'llama3-70b-8192');
+        $this->model = config('ai.providers.groq.model', 'llama-3.1-8b-instant');
         $this->temperature = config('ai.providers.groq.temperature', 0.1);
         $this->promptTemplate = config('ai.classifier.prompt');
     }
@@ -43,7 +43,7 @@ class GroqService implements AIServiceInterface
             ->retry(1, 1000, throw: false)
             ->withToken($this->apiKey)
             ->post($url, [
-                'model' => 'llama3-70b-8192',
+                'model' => 'llama-3.1-8b-instant',
                 'messages' => [
                     ['role' => 'user', 'content' => $prompt],
                 ],
@@ -65,6 +65,48 @@ class GroqService implements AIServiceInterface
         $text = $data['choices'][0]['message']['content'] ?? '';
 
         return trim($text);
+    }
+
+    public function getAdvisorResponse(array $messages, float $temperature = 0.7, int $maxTokens = 1024): string
+    {
+        $url = 'https://api.groq.com/openai/v1/chat/completions';
+
+        $response = Http::timeout(30)
+            ->retry(1, 1000, throw: false)
+            ->withToken($this->apiKey)
+            ->post($url, [
+                'model' => 'llama-3.1-8b-instant',
+                'messages' => $messages,
+                'temperature' => $temperature,
+                'max_tokens' => $maxTokens,
+            ]);
+
+        if ($response->failed()) {
+            $status = $response->status();
+            $body = $response->body();
+            Log::error("Groq API advisor request failed", [
+                'status' => $status,
+                'body' => $body,
+            ]);
+            throw new ConnectionException("Groq API returned status {$status}: {$body}");
+        }
+
+        $data = $response->json();
+        return trim($data['choices'][0]['message']['content'] ?? '');
+    }
+
+    public function detectIntent(string $userInput): array
+    {
+        $systemPrompt = "You are an intent detection engine. Analyze the user's input and extract budget intents. Return ONLY valid JSON in this format: {\"intent\": \"set_budget\"|\"add_budget\"|\"none\", \"category\": string|null, \"amount\": float|null, \"period\": \"monthly\"|\"weekly\"|null}. Do not return anything else.";
+        $response = $this->getAdvisorResponse([
+            ['role' => 'system', 'content' => $systemPrompt],
+            ['role' => 'user', 'content' => $userInput]
+        ], 0.1);
+        
+        $cleaned = trim($response);
+        $cleaned = preg_replace('/^```(?:json)?\s*|\s*```$/', '', $cleaned);
+        
+        return json_decode($cleaned, true) ?? ['intent' => 'none'];
     }
 
     private function sendRequest(string $prompt): string

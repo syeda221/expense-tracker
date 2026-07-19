@@ -64,7 +64,7 @@ class IntentDetector
         $amount = null;
         $category = null;
 
-        if (preg_match('/(\d[\d,]*)\s*(?:rs|pkr|usd|\$|usd)?/i', $message, $m)) {
+        if (preg_match('/(\d[\d,]*)\s*(?:rs|rs|usd|\$|usd)?/i', $message, $m)) {
             $amount = (float) str_replace(',', '', $m[1]);
         }
 

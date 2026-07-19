@@ -65,7 +65,7 @@
                             <div style="display:flex;gap:32px;flex-shrink:0">
                                 <div style="text-align:center">
                                     <p style="margin:0 0 2px;font-size:11px;color:var(--text-dim);font-weight:500;text-transform:uppercase;letter-spacing:0.5px">Total Spent</p>
-                                    <p style="margin:0;font-size:22px;font-weight:800;color:var(--success)">${{ number_format($summary['total'], 2) }}</p>
+                                    <p style="margin:0;font-size:22px;font-weight:800;color:var(--success)">RS {{ number_format($summary['total'], 2) }}</p>
                                 </div>
                                 <div style="text-align:center">
                                     <p style="margin:0 0 2px;font-size:11px;color:var(--text-dim);font-weight:500;text-transform:uppercase;letter-spacing:0.5px">Transactions</p>
@@ -125,7 +125,7 @@
                                 </div>
                             </div>
                             <div style="text-align:right;flex-shrink:0">
-                                <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px">${{ number_format($expense->amount, 2) }}</div>
+                                <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px">RS {{ number_format($expense->amount, 2) }}</div>
                                 <span class="badge-premium category" style="font-size:11px">{{ $expense->category }}</span>
                             </div>
                             <i data-lucide="chevron-right" style="width:18px;height:18px;color:var(--text-dim);flex-shrink:0"></i>

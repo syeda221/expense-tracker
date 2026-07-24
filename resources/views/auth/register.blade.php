@@ -1,8 +1,7 @@
 <x-guest-layout>
     <div class="login-brand" style="margin-bottom:24px">
-        <div class="login-brand-icon">$</div>
-        <h4 class="login-brand-name">Create Account</h4>
-        <p class="login-brand-tagline">Join ExpenseTrack to manage your finances</p>
+        <h4 class="brand-name" style="font-size:26px; font-weight:800; letter-spacing:-0.03em; text-align:center;">Create Account</h4>
+        <p class="brand-tagline" style="font-size:15px; text-align:center; margin-top:8px;">Join Foresight to manage your finances.</p>
     </div>
 
     <form method="POST" action="{{ route('register') }}" class="form-premium">

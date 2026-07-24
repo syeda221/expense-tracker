@@ -24,6 +24,18 @@ class GoalController extends Controller
         $goal->saved_amount += $validated['amount'];
         $goal->save();
 
+        \App\Models\Expense::create([
+            'user_id' => Auth::id(),
+            'amount' => $validated['amount'],
+            'description' => 'Contribution to ' . $goal->name,
+            'category' => 'Savings',
+            'merchant' => 'Goal Transfer',
+            'payment_method' => 'Transfer',
+            'expense_date' => now(),
+            'ai_confidence' => 1.0,
+            'is_recurring' => false,
+        ]);
+
         return redirect()->back()->with('success', 'Funds added to goal successfully.');
     }
 }

@@ -16,7 +16,7 @@
         </div>
 
         <div style="position:relative;z-index:2">
-            <h1 class="page-title" style="margin:0;font-size:36px;font-weight:800;letter-spacing:-0.03em;">Hi  {{ Auth::user()->name }}!</h1>
+            <h1 class="page-title" style="margin:0;font-size:36px;font-weight:800;letter-spacing:-0.03em;">Hello  {{ Auth::user()->name }}!</h1>
             <p class="page-subtitle" style="margin:16px auto 0;font-size:16px;color:var(--text-muted);line-height:1.6;max-width:400px;">Your financial overview is ready.<br>Let's make it a great day!</p>
             <div style="margin-top: 32px;">
                 <a href="{{ route('expenses.create') }}" class="btn-premium btn-primary" style="padding: 12px 28px; font-weight: 600; font-size: 15px;">
@@ -375,9 +375,14 @@
                                 <span style="font-size:11px;color:var(--text-muted)">Target: {{ \Carbon\Carbon::parse($goal->deadline)->format('M d, Y') }}</span>
                                 @endif
                             </div>
-                            <div style="text-align:right">
-                                <span style="font-size:13px;font-weight:600;color:var(--primary)">RS {{ number_format($goal->saved_amount, 0) }}</span>
-                                <span style="font-size:11px;color:var(--text-dim)">/ RS {{ number_format($goal->target_amount, 0) }}</span>
+                            <div style="display:flex;align-items:center;gap:12px;">
+                                <div style="text-align:right">
+                                    <span style="font-size:13px;font-weight:600;color:var(--primary)">RS {{ number_format($goal->saved_amount, 0) }}</span>
+                                    <span style="font-size:11px;color:var(--text-dim)">/ RS {{ number_format($goal->target_amount, 0) }}</span>
+                                </div>
+                                <button type="button" class="btn-premium hover-lift" onclick="openContributeModal({{ $goal->id }}, '{{ addslashes($goal->name) }}')" style="padding:6px; border-radius:8px; background:var(--primary-subtle); color:var(--primary); border:none; display:flex; align-items:center; justify-content:center; cursor:pointer;" title="Contribute Funds">
+                                    <i data-lucide="plus" style="width:16px;height:16px;"></i>
+                                </button>
                             </div>
                         </div>
                         <div class="progress-premium" style="height: 16px; border-radius: 8px; background:var(--bg-hover); margin-top:8px;">
@@ -749,3 +754,44 @@
     </script>
     @endpush
 </x-app-layout>
+
+<!-- Contribute Modal -->
+<div id="contributeModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:9999; align-items:center; justify-content:center;">
+    <div style="position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); backdrop-filter:blur(4px);" onclick="closeContributeModal()"></div>
+    <div class="card-premium fade-in-up" style="position:relative; z-index:1; width:90%; max-width:400px; background:var(--bg-card); border-radius:16px; padding:24px; box-shadow:0 20px 40px rgba(0,0,0,0.2);">
+        <h3 style="margin:0 0 8px; font-size:20px; font-weight:800; color:var(--text); letter-spacing:-0.02em;">Contribute to Goal</h3>
+        <p style="margin:0 0 24px; font-size:14px; color:var(--text-muted);">Set aside funds for <strong id="modalGoalName" style="color:var(--text);"></strong>.</p>
+        
+        <form id="contributeForm" method="POST" action="">
+            @csrf
+            <div style="margin-bottom:20px;">
+                <label style="display:block; font-size:12px; font-weight:600; color:var(--text-dim); margin-bottom:8px;">Amount (RS)</label>
+                <div style="position:relative;">
+                    <span style="position:absolute; left:16px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-weight:600;">RS</span>
+                    <input type="number" name="amount" required min="0.01" step="0.01" style="width:100%; padding:14px 16px 14px 44px; border-radius:12px; border:1px solid var(--border); background:var(--bg-hover); color:var(--text); font-size:16px; font-weight:600; outline:none; transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+                </div>
+            </div>
+            
+            <div style="display:flex; gap:12px; justify-content:flex-end;">
+                <button type="button" onclick="closeContributeModal()" class="btn-premium" style="padding:12px 24px; border-radius:10px; background:var(--bg-hover); color:var(--text); font-weight:600; border:1px solid var(--border); cursor:pointer;">Cancel</button>
+                <button type="submit" class="btn-premium btn-primary" style="padding:12px 24px; border-radius:10px; font-weight:600; cursor:pointer;">Add Funds</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openContributeModal(goalId, goalName) {
+    document.getElementById('modalGoalName').innerText = goalName;
+    document.getElementById('contributeForm').action = '/goals/' + goalId + '/add-funds';
+    var modal = document.getElementById('contributeModal');
+    modal.style.display = 'flex';
+    setTimeout(() => {
+        modal.querySelector('input[name="amount"]').focus();
+    }, 50);
+}
+
+function closeContributeModal() {
+    document.getElementById('contributeModal').style.display = 'none';
+}
+</script>

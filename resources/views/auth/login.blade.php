@@ -1,23 +1,18 @@
 <x-guest-layout>
-    {{-- Owl Mascot --}}
+    {{-- Mascot --}}
     <div class="login-mascot">
-        <div class="mascot-wrapper">
+        <div class="mascot-wrapper" style="width:110px; height:120px;">
             <div class="mascot-glow"></div>
             <video autoplay loop muted playsinline class="owl-video mascot-video">
                 <source src="{{ asset('video/Mascot_placing_wing_on_chin_202606242120.mp4') }}" type="video/mp4">
             </video>
         </div>
-        <div class="speech-bubble">
-            <div class="speech-arrow"></div>
-            <p class="speech-text">Welcome back! <strong>Ready to track your expenses?</strong></p>
-        </div>
     </div>
 
     {{-- Brand --}}
-    <div class="login-brand">
-        <div class="brand-icon">$</div>
-        <h1 class="brand-name">ExpenseTrack</h1>
-        <p class="brand-tagline">AI-powered expense management</p>
+    <div class="login-brand" style="margin-top:12px;">
+        <h1 class="brand-name" style="font-size:26px; font-weight:800; letter-spacing:-0.03em;">Welcome back</h1>
+        <p class="brand-tagline" style="font-size:15px;">Log in to Foresight to manage your expenses.</p>
     </div>
 
     {{-- Form --}}

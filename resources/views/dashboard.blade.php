@@ -10,7 +10,7 @@
             <!-- Soft radial glow behind mascot -->
             <div style="position:absolute;bottom:20px;width:300px;height:300px;background:radial-gradient(circle, rgba(22,199,183,0.2) 0%, rgba(22,199,183,0) 70%);border-radius:50%;z-index:-1;"></div>
             
-            <video autoplay loop muted playsinline class="owl-video" style="width:100%;height:100%;object-fit:cover;object-position:bottom;pointer-events:auto;mix-blend-mode:darken;-webkit-mask-image:radial-gradient(circle at center 60%, black 50%, transparent 80%);mask-image:radial-gradient(circle at center 60%, black 50%, transparent 80%);">
+            <video autoplay loop muted playsinline class="owl-video" style="width:100%;height:100%;object-fit:cover;object-position:bottom;pointer-events:auto;mix-blend-mode:multiply;">
                 <source src="{{ asset('video/hellow.mp4') }}" type="video/mp4">
             </video>
             
@@ -162,7 +162,7 @@
                 @else
                     <div class="empty-state">
                         <div class="owl-container" style="margin-bottom: 16px;">
-                            <video autoplay loop muted playsinline class="owl-video" style="width:160px;height:160px;margin:-16px 0">
+                            <video autoplay loop muted playsinline class="owl-video" style="width:160px;height:160px;margin:-16px 0;mix-blend-mode:multiply;">
                                 <source src="{{ asset('video/hellow.mp4') }}" type="video/mp4">
                             </video>
                         </div>
@@ -227,7 +227,7 @@
                 @else
                     <div class="empty-state">
                         <div class="owl-container" style="margin-bottom: 16px;">
-                            <video autoplay loop muted playsinline class="owl-video" style="width:160px;height:160px;margin:-16px 0">
+                            <video autoplay loop muted playsinline class="owl-video" style="width:160px;height:160px;margin:-16px 0;mix-blend-mode:multiply;">
                                 <source src="{{ asset('video/hellow.mp4') }}" type="video/mp4">
                             </video>
                         </div>
@@ -306,7 +306,7 @@
                                 <!-- Mascot with glow -->
                                 <div class="owl-container" style="position:relative;width:120px;height:120px;flex-shrink:0;">
                                     <div style="position:absolute;bottom:0;width:120px;height:120px;background:radial-gradient(circle, rgba(239,68,68,0.2) 0%, rgba(239,68,68,0) 70%);border-radius:50%;z-index:-1;"></div>
-                                    <video autoplay loop muted playsinline class="owl-video" style="width:100%;height:100%;object-fit:cover;object-position:bottom;">
+                                    <video autoplay loop muted playsinline class="owl-video" style="width:100%;height:100%;object-fit:cover;object-position:bottom;mix-blend-mode:multiply;">
                                         <source src="{{ asset('video/Owl_notices_spending_increase_202606250101.mp4') }}" type="video/mp4">
                                     </video>
                                 </div>
@@ -327,7 +327,7 @@
                                 <!-- Mascot with glow -->
                                 <div class="owl-container" style="position:relative;width:120px;height:120px;flex-shrink:0;">
                                     <div style="position:absolute;bottom:0;width:120px;height:120px;background:radial-gradient(circle, rgba(245,158,11,0.2) 0%, rgba(245,158,11,0) 70%);border-radius:50%;z-index:-1;"></div>
-                                    <video autoplay loop muted playsinline class="owl-video" style="width:100%;height:100%;object-fit:cover;object-position:bottom;">
+                                    <video autoplay loop muted playsinline class="owl-video" style="width:100%;height:100%;object-fit:cover;object-position:bottom;mix-blend-mode:multiply;">
                                         <source src="{{ asset('video/Owl_notices_spending_increase_202606250101.mp4') }}" type="video/mp4">
                                     </video>
                                 </div>

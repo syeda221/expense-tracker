@@ -560,6 +560,10 @@
             
             const reply = data.response || data.message || 'Sorry, I could not process that.';
             addMessage(reply, data.type || 'assistant');
+            
+            if (data.should_refresh) {
+                window.dispatchEvent(new CustomEvent('financial-data-updated'));
+            }
         } catch (err) {
             hideTyping();
             await new Promise(resolve => setTimeout(resolve, 250));

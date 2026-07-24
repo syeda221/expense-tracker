@@ -95,9 +95,29 @@ class GroqService implements AIServiceInterface
         return trim($data['choices'][0]['message']['content'] ?? '');
     }
 
-    public function detectIntent(string $userInput): array
+    public function parseCopilotIntents(string $userInput, array $preferences = []): array
     {
-        $systemPrompt = "You are an intent detection engine. Analyze the user's input and extract budget intents. Return ONLY valid JSON in this format: {\"intent\": \"set_budget\"|\"add_budget\"|\"none\", \"category\": string|null, \"amount\": float|null, \"period\": \"monthly\"|\"weekly\"|null}. Do not return anything else.";
+        $prefsJson = empty($preferences) ? "None" : json_encode($preferences);
+        $today = \Carbon\Carbon::now()->format('Y-m-d');
+        $systemPrompt = <<<PROMPT
+You are a financial AI Copilot intent parser. Analyze the user's input and extract ALL actions they want to perform.
+Consider the user's preferences when categorizing (e.g. if preference maps 'Starbucks' to 'Coffee', use 'Coffee').
+User Preferences: $prefsJson
+Today's Date: $today (Use this to calculate relative deadlines like "in 7 days")
+
+Return ONLY a valid JSON array of action objects. Do NOT wrap it in markdown. Do NOT return anything else.
+
+Possible actions and their required fields:
+1. {"action": "create_expense", "amount": float, "category": string, "merchant": string, "date": "YYYY-MM-DD"|null}
+2. {"action": "manage_budget", "type": "set"|"add"|"remove"|"increase"|"decrease", "category": string|null (null for overall), "amount": float|null, "period": "monthly"|"weekly"|"yearly"} (Use ONLY for setting spending limits/budgets. DO NOT use for savings)
+3. {"action": "manage_goal", "type": "create"|"update"|"delete", "name": string, "target_amount": float, "deadline": "YYYY-MM-DD"|null} (Use this when the user wants to "save" money or set a savings goal)
+4. {"action": "set_preference", "key": string, "value": string}
+5. {"action": "ask_insight", "question": string}
+6. {"action": "make_recurring", "expense_id": int|null, "frequency": "monthly"|"weekly"}
+
+If the input is just a general question or doesn't match above, use {"action": "ask_insight", "question": "..."}.
+PROMPT;
+
         $response = $this->getAdvisorResponse([
             ['role' => 'system', 'content' => $systemPrompt],
             ['role' => 'user', 'content' => $userInput]
@@ -106,7 +126,18 @@ class GroqService implements AIServiceInterface
         $cleaned = trim($response);
         $cleaned = preg_replace('/^```(?:json)?\s*|\s*```$/', '', $cleaned);
         
-        return json_decode($cleaned, true) ?? ['intent' => 'none'];
+        $decoded = json_decode($cleaned, true);
+        
+        if (!is_array($decoded)) {
+            return [['action' => 'ask_insight', 'question' => $userInput]];
+        }
+        
+        // Handle case where it returns a single object instead of an array
+        if (isset($decoded['action'])) {
+            return [$decoded];
+        }
+
+        return $decoded;
     }
 
     private function sendRequest(string $prompt): string

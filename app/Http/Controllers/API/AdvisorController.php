@@ -19,12 +19,14 @@ class AdvisorController extends Controller
     private SpendingAnalyticsService $analytics;
     private AdvisorPromptBuilder $promptBuilder;
     private GroqService $groq;
+    private \App\Services\AI\AICopilotService $copilot;
 
-    public function __construct(SpendingAnalyticsService $analytics, AdvisorPromptBuilder $promptBuilder, GroqService $groq)
+    public function __construct(SpendingAnalyticsService $analytics, AdvisorPromptBuilder $promptBuilder, GroqService $groq, \App\Services\AI\AICopilotService $copilot)
     {
         $this->analytics = $analytics;
         $this->promptBuilder = $promptBuilder;
         $this->groq = $groq;
+        $this->copilot = $copilot;
     }
 
     public function getWeeklySummary(Request $request)
@@ -76,39 +78,6 @@ class AdvisorController extends Controller
         $user = Auth::user();
         $question = $request->question;
 
-        // 1. Intent Detection for Budgets
-        $intentData = $this->groq->detectIntent($question);
-        $intent = $intentData['intent'] ?? '';
-        
-        if (in_array($intent, ['set_budget', 'add_budget']) && isset($intentData['amount'])) {
-            $category = $intentData['category'] ?? 'General';
-            if (strtolower($category) === 'general' || strtolower($category) === 'overall') {
-                $category = null;
-            }
-            $budget = Budget::firstOrNew([
-                'user_id' => $user->id,
-                'category' => $category,
-            ]);
-            
-            if ($intent === 'add_budget') {
-                $budget->amount = ($budget->amount ?? 0) + $intentData['amount'];
-            } else {
-                $budget->amount = $intentData['amount'];
-            }
-            
-            $budget->period_type = $intentData['period'] ?? 'monthly';
-            if (!$budget->exists) {
-                $budget->period_start = now()->startOfMonth();
-            }
-            $budget->save();
-            
-            return response()->json([
-                'success' => true,
-                'message' => "I've successfully updated your budget for " . $category . " to RS " . $budget->amount . "!"
-            ]);
-        }
-
-        // 2. Normal Chat
         $conversation = AdvisorConversation::firstOrCreate(
             ['user_id' => $user->id],
             ['title' => 'Chat with Ollie']
@@ -120,44 +89,19 @@ class AdvisorController extends Controller
             'message' => $question
         ]);
 
-        $data = [
-            'weekly_summary' => $this->analytics->getWeeklySummary($user->id),
-            'monthly_progress' => $this->analytics->getMonthlyProgress($user->id),
-            'budgets' => Budget::where('user_id', $user->id)->get()->map(function($b) {
-                return ['category' => $b->category ?? 'Overall', 'amount' => $b->amount];
-            })->toArray(),
-        ];
-        
-        $systemPrompt = $this->promptBuilder->buildSystemPrompt();
-        $userMessage = $this->promptBuilder->buildUserMessage($data, $question);
-
-        $messages = [['role' => 'system', 'content' => $systemPrompt]];
-        
-        // Add last 5 history messages
-        $history = AdvisorMessage::where('conversation_id', $conversation->id)
-            ->latest()
-            ->take(5)
-            ->get()
-            ->reverse();
-            
-        foreach ($history as $msg) {
-            $messages[] = ['role' => $msg->role, 'content' => $msg->message];
-        }
-        
-        $messages[] = ['role' => 'user', 'content' => $userMessage];
-
         try {
-            $aiResponse = $this->groq->getAdvisorResponse($messages);
+            $result = $this->copilot->processUserMessage($user, $question);
 
             AdvisorMessage::create([
                 'conversation_id' => $conversation->id,
                 'role' => 'assistant',
-                'message' => $aiResponse
+                'message' => $result['response']
             ]);
 
             return response()->json([
                 'success' => true,
-                'response' => $aiResponse
+                'response' => $result['response'],
+                'should_refresh' => $result['should_refresh']
             ]);
         } catch (\Exception $e) {
             \Log::error('Advisor ask error: ' . $e->getMessage());

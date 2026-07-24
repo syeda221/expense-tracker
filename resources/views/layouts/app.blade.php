@@ -22,10 +22,7 @@
                 <div class="sidebar-logo-icon" style="background:transparent; padding:0; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:50%; width:52px; height:52px; flex-shrink:0; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
                     <img src="{{ asset('images/logo.png') }}" style="width:100%; height:100%; object-fit:cover; transform:scale(2.0);" alt="Logo">
                 </div>
-                <div>
-                    <div class="sidebar-logo-text">Foresight</div>
-                    <span class="sidebar-logo-ai">AI</span>
-                </div>
+                <div class="sidebar-logo-text" style="font-size: 20px; font-weight: 700; margin-left: 4px;">Foresight</div>
             </div>
 
             <nav class="sidebar-nav">

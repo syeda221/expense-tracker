@@ -38,4 +38,18 @@ class GoalController extends Controller
 
         return redirect()->back()->with('success', 'Funds added to goal successfully.');
     }
+
+    /**
+     * Delete a specific goal.
+     */
+    public function destroy(Goal $goal)
+    {
+        if ($goal->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $goal->delete();
+
+        return redirect()->back()->with('success', 'Goal deleted successfully.');
+    }
 }

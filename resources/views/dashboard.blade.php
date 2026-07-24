@@ -380,9 +380,18 @@
                                     <span style="font-size:13px;font-weight:600;color:var(--primary)">RS {{ number_format($goal->saved_amount, 0) }}</span>
                                     <span style="font-size:11px;color:var(--text-dim)">/ RS {{ number_format($goal->target_amount, 0) }}</span>
                                 </div>
-                                <button type="button" class="btn-premium hover-lift" onclick="openContributeModal({{ $goal->id }}, '{{ addslashes($goal->name) }}')" style="padding:6px; border-radius:8px; background:var(--primary-subtle); color:var(--primary); border:none; display:flex; align-items:center; justify-content:center; cursor:pointer;" title="Contribute Funds">
-                                    <i data-lucide="plus" style="width:16px;height:16px;"></i>
-                                </button>
+                                <div style="display:flex;align-items:center;gap:6px;">
+                                    <form action="{{ route('goals.destroy', $goal) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this goal?');" style="margin:0;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn-premium hover-lift" style="padding:6px; border-radius:8px; background:var(--danger-subtle); color:var(--danger); border:none; display:flex; align-items:center; justify-content:center; cursor:pointer;" title="Delete Goal">
+                                            <i data-lucide="trash-2" style="width:16px;height:16px;"></i>
+                                        </button>
+                                    </form>
+                                    <button type="button" class="btn-premium hover-lift" onclick="openContributeModal({{ $goal->id }}, '{{ addslashes($goal->name) }}')" style="padding:6px; border-radius:8px; background:var(--primary-subtle); color:var(--primary); border:none; display:flex; align-items:center; justify-content:center; cursor:pointer;" title="Contribute Funds">
+                                        <i data-lucide="plus" style="width:16px;height:16px;"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         <div class="progress-premium" style="height: 16px; border-radius: 8px; background:var(--bg-hover); margin-top:8px;">

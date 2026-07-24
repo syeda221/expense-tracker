@@ -155,7 +155,7 @@ class BudgetService
                             'threshold' => $threshold,
                             'spent' => $status['spent'],
                             'budget' => $status['budget'],
-                            'message' => "⚠️ {$label} budget is at {$status['percentage']}% (\${$status['spent']} of \${$status['budget']}).",
+                            'message' => "⚠️ {$label} budget is at {$status['percentage']}% (RS {$status['spent']} of RS {$status['budget']}).",
                         ];
                     }
                 }
@@ -212,7 +212,7 @@ class BudgetService
             $result['reduction_percent'] = $percent;
             $result['savings'] = $saving;
             $result['projected_total'] = $projected;
-            $result['message'] = "Reducing {$category} by {$percent}% (currently \${$currentCatSpending}) would save \${$saving} this month, bringing your total to \${$projected}.";
+            $result['message'] = "Reducing {$category} by {$percent}% (currently RS {$currentCatSpending}) would save RS {$saving} this month, bringing your total to RS {$projected}.";
 
         } elseif ($type === 'cancel_subscription') {
             $merchant = $params['merchant'] ?? '';
@@ -224,12 +224,12 @@ class BudgetService
             $result['merchant_total'] = $merchantTotal;
             $result['savings'] = $saving;
             $result['projected_total'] = $projected;
-            $result['message'] = "Cancelling {$merchant} (currently \${$merchantTotal} this month) would save \${$saving}, bringing your total to \${$projected}.";
+            $result['message'] = "Cancelling {$merchant} (currently RS {$merchantTotal} this month) would save RS {$saving}, bringing your total to RS {$projected}.";
 
         } elseif ($type === 'increase_budget') {
             $newBudget = (float) ($params['amount'] ?? $monthlyTotal);
             $result['new_budget'] = $newBudget;
-            $result['message'] = "Increasing budget to \${$newBudget} gives you \$" . max(0, $newBudget - $monthlyTotal) . " in remaining budget.";
+            $result['message'] = "Increasing budget to RS {$newBudget} gives you RS " . max(0, $newBudget - $monthlyTotal) . " in remaining budget.";
         }
 
         return $result;

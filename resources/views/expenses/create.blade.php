@@ -23,7 +23,7 @@
                             <div class="form-premium">
                                 <label for="amount" class="form-label">Amount <span style="color:var(--danger)">*</span></label>
                                 <div style="display:flex">
-                                    <span style="background:var(--bg-hover);border:1px solid var(--border);border-right:none;border-radius:8px 0 0 8px;padding:10px 14px;color:var(--text-muted);font-size:14px">$</span>
+                                    <span style="background:var(--bg-hover);border:1px solid var(--border);border-right:none;border-radius:8px 0 0 8px;padding:10px 14px;color:var(--text-muted);font-size:14px">RS</span>
                                     <input id="amount" type="number" step="0.01" min="0" class="form-control @error('amount') is-invalid @enderror" name="amount" value="{{ old('amount') }}" placeholder="0.00" required style="border-radius:0 8px 8px 0">
                                 </div>
                                 @error('amount')
@@ -48,20 +48,7 @@
                             <div style="font-size:12px;color:var(--text-dim);margin-top:4px">A detailed description helps AI categorize accurately.</div>
                         </div>
 
-                        <div class="form-premium" style="margin-bottom:20px">
-                            <label for="payment_method" class="form-label">Payment Method <span style="color:var(--danger)">*</span></label>
-                            <select id="payment_method" class="form-select @error('payment_method') is-invalid @enderror" name="payment_method" required>
-                                <option value="">Select payment method</option>
-                                <option value="Cash" @selected(old('payment_method') == 'Cash')>Cash</option>
-                                <option value="Credit Card" @selected(old('payment_method') == 'Credit Card')>Credit Card</option>
-                                <option value="Debit Card" @selected(old('payment_method') == 'Debit Card')>Debit Card</option>
-                                <option value="UPI" @selected(old('payment_method') == 'UPI')>UPI</option>
-                                <option value="Bank Transfer" @selected(old('payment_method') == 'Bank Transfer')>Bank Transfer</option>
-                            </select>
-                            @error('payment_method')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+
 
                         <div class="form-premium" style="margin-bottom:24px">
                             <label for="notes" class="form-label">Notes</label>
@@ -131,7 +118,7 @@
                         </div>
                         <div style="display:flex;align-items:flex-start;gap:10px">
                             <span style="font-size:16px;flex-shrink:0">💡</span>
-                            <small style="color:var(--text-dim);line-height:1.4">Use natural language like "Paid rent $1500" or "Bought groceries at Walmart".</small>
+                            <small style="color:var(--text-dim);line-height:1.4">Use natural language like "Paid rent RS 1500" or "Bought groceries at Walmart".</small>
                         </div>
                         <div style="display:flex;align-items:flex-start;gap:10px">
                             <span style="font-size:16px;flex-shrink:0">💡</span>

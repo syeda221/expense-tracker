@@ -31,7 +31,7 @@
                             <div class="form-premium">
                                 <label for="amount" class="form-label">Amount <span style="color:var(--danger)">*</span></label>
                                 <div style="display:flex">
-                                    <span style="background:var(--bg-hover);border:1px solid var(--border);border-right:none;border-radius:8px 0 0 8px;padding:10px 14px;color:var(--text-muted);font-size:14px">$</span>
+                                    <span style="background:var(--bg-hover);border:1px solid var(--border);border-right:none;border-radius:8px 0 0 8px;padding:10px 14px;color:var(--text-muted);font-size:14px">RS</span>
                                     <input id="amount" type="number" step="0.01" min="0" class="form-control @error('amount') is-invalid @enderror" name="amount" value="{{ old('amount', $expense->amount) }}" required style="border-radius:0 8px 8px 0">
                                 </div>
                                 @error('amount')
@@ -55,20 +55,7 @@
                             @enderror
                         </div>
 
-                        <div class="form-premium" style="margin-bottom:20px">
-                            <label for="payment_method" class="form-label">Payment Method <span style="color:var(--danger)">*</span></label>
-                            <select id="payment_method" class="form-select @error('payment_method') is-invalid @enderror" name="payment_method" required>
-                                <option value="">Select method</option>
-                                <option value="Cash" @selected(old('payment_method', $expense->payment_method) == 'Cash')>Cash</option>
-                                <option value="Credit Card" @selected(old('payment_method', $expense->payment_method) == 'Credit Card')>Credit Card</option>
-                                <option value="Debit Card" @selected(old('payment_method', $expense->payment_method) == 'Debit Card')>Debit Card</option>
-                                <option value="UPI" @selected(old('payment_method', $expense->payment_method) == 'UPI')>UPI</option>
-                                <option value="Bank Transfer" @selected(old('payment_method', $expense->payment_method) == 'Bank Transfer')>Bank Transfer</option>
-                            </select>
-                            @error('payment_method')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+
 
                         <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
                             <div class="form-premium">

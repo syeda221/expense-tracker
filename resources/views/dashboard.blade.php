@@ -7,10 +7,8 @@
 
     <div class="page-header fade-in" style="position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;background:transparent;border:none;padding:180px 24px 20px;margin-top:40px;margin-bottom:20px;overflow:visible;">
         <div class="owl-container" style="position:absolute;top:-80px;left:50%;transform:translateX(-50%);z-index:3;width:240px;height:240px;display:flex;align-items:flex-end;justify-content:center;pointer-events:none;">
-            <!-- Soft radial glow behind mascot -->
-            <div style="position:absolute;bottom:20px;width:300px;height:300px;background:radial-gradient(circle, rgba(22,199,183,0.2) 0%, rgba(22,199,183,0) 70%);border-radius:50%;z-index:-1;"></div>
-            
-            <video autoplay loop muted playsinline class="owl-video" style="width:100%;height:100%;object-fit:cover;object-position:bottom;pointer-events:auto;mix-blend-mode:multiply;">
+            <!-- Removed radial glow per user request to keep video original -->
+            <video autoplay loop muted playsinline class="owl-video" style="width:100%;height:100%;object-fit:cover;object-position:bottom;pointer-events:auto;">
                 <source src="{{ asset('video/hellow.mp4') }}" type="video/mp4">
             </video>
             
@@ -162,7 +160,7 @@
                 @else
                     <div class="empty-state">
                         <div class="owl-container" style="margin-bottom: 16px;">
-                            <video autoplay loop muted playsinline class="owl-video" style="width:160px;height:160px;margin:-16px 0;mix-blend-mode:multiply;">
+                            <video autoplay loop muted playsinline class="owl-video" style="width:160px;height:160px;margin:-16px 0;">
                                 <source src="{{ asset('video/hellow.mp4') }}" type="video/mp4">
                             </video>
                         </div>
@@ -227,7 +225,7 @@
                 @else
                     <div class="empty-state">
                         <div class="owl-container" style="margin-bottom: 16px;">
-                            <video autoplay loop muted playsinline class="owl-video" style="width:160px;height:160px;margin:-16px 0;mix-blend-mode:multiply;">
+                            <video autoplay loop muted playsinline class="owl-video" style="width:160px;height:160px;margin:-16px 0;">
                                 <source src="{{ asset('video/hellow.mp4') }}" type="video/mp4">
                             </video>
                         </div>
@@ -307,7 +305,7 @@
                                 <!-- Mascot with glow -->
                                 <div class="owl-container" style="position:relative;width:120px;height:120px;flex-shrink:0;">
                                     <div style="position:absolute;bottom:0;width:120px;height:120px;background:radial-gradient(circle, rgba(239,68,68,0.2) 0%, rgba(239,68,68,0) 70%);border-radius:50%;z-index:-1;"></div>
-                                    <video autoplay loop muted playsinline class="owl-video" style="width:100%;height:100%;object-fit:cover;object-position:bottom;mix-blend-mode:multiply;">
+                                    <video autoplay loop muted playsinline class="owl-video" style="width:100%;height:100%;object-fit:cover;object-position:bottom;">
                                         <source src="{{ asset('video/Owl_notices_spending_increase_202606250101.mp4') }}" type="video/mp4">
                                     </video>
                                 </div>
@@ -328,7 +326,7 @@
                                 <!-- Mascot with glow -->
                                 <div class="owl-container" style="position:relative;width:120px;height:120px;flex-shrink:0;">
                                     <div style="position:absolute;bottom:0;width:120px;height:120px;background:radial-gradient(circle, rgba(245,158,11,0.2) 0%, rgba(245,158,11,0) 70%);border-radius:50%;z-index:-1;"></div>
-                                    <video autoplay loop muted playsinline class="owl-video" style="width:100%;height:100%;object-fit:cover;object-position:bottom;mix-blend-mode:multiply;">
+                                    <video autoplay loop muted playsinline class="owl-video" style="width:100%;height:100%;object-fit:cover;object-position:bottom;">
                                         <source src="{{ asset('video/Owl_notices_spending_increase_202606250101.mp4') }}" type="video/mp4">
                                     </video>
                                 </div>
@@ -535,7 +533,7 @@
                         cornerRadius: 8,
                         callbacks: {
                             label: function (ctx) {
-                                return '$' + parseFloat(ctx.raw).toLocaleString('en-US', { minimumFractionDigits: 2 });
+                                return 'RS ' + parseFloat(ctx.raw).toLocaleString('en-US', { minimumFractionDigits: 2 });
                             }
                         }
                     }
@@ -544,7 +542,7 @@
                     y: {
                         beginAtZero: true,
                         grid: { color: 'rgba(231, 236, 242, 0.6)' },
-                        ticks: { callback: function (v) { return '$' + v; } }
+                        ticks: { callback: function (v) { return 'RS ' + v; } }
                     },
                     x: {
                         grid: { display: false }
@@ -680,7 +678,7 @@
                                     return items[0].label;
                                 },
                                 label: function (ctx) {
-                                    return '$' + parseFloat(ctx.raw).toLocaleString('en-US', { minimumFractionDigits: 2 });
+                                    return 'RS ' + parseFloat(ctx.raw).toLocaleString('en-US', { minimumFractionDigits: 2 });
                                 }
                             }
                         }
@@ -693,7 +691,7 @@
                                 drawBorder: false,
                             },
                             ticks: {
-                                callback: function (v) { return '$' + v; },
+                                callback: function (v) { return 'RS ' + v; },
                                 font: { size: 10 },
                                 color: '#6B7280',
                                 maxTicksLimit: 6,
@@ -713,17 +711,17 @@
             });
 
             // Update KPI cards
-            document.getElementById('kpiTotal').textContent = '$' + Number(range.total).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            document.getElementById('kpiAvg').textContent = '$' + Number(range.avgDaily).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            document.getElementById('kpiProjected').textContent = '$' + Number(range.total).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('kpiTotal').textContent = 'RS ' + Number(range.total).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('kpiAvg').textContent = 'RS ' + Number(range.avgDaily).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('kpiProjected').textContent = 'RS ' + Number(range.total).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             document.getElementById('kpiBudget').textContent = data.filter(function (d) { return d.total > 0; }).length + '/' + data.length + ' days';
 
             // Update footer stats
             var h = range.highestDay;
-            document.getElementById('statHighest').textContent = h ? '$' + Number(h.total).toLocaleString('en-US', { minimumFractionDigits: 2 }) + ' · ' + fmtDate(h.date) : '—';
+            document.getElementById('statHighest').textContent = h ? 'RS ' + Number(h.total).toLocaleString('en-US', { minimumFractionDigits: 2 }) + ' · ' + fmtDate(h.date) : '—';
             var l = range.lowestDay;
-            document.getElementById('statLowest').textContent = l ? '$' + Number(l.total).toLocaleString('en-US', { minimumFractionDigits: 2 }) + ' · ' + fmtDate(l.date) : '—';
-            document.getElementById('statAvg').textContent = '$' + Number(range.avgDaily).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('statLowest').textContent = l ? 'RS ' + Number(l.total).toLocaleString('en-US', { minimumFractionDigits: 2 }) + ' · ' + fmtDate(l.date) : '—';
+            document.getElementById('statAvg').textContent = 'RS ' + Number(range.avgDaily).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             document.getElementById('statCount').textContent = Number(range.count).toLocaleString();
         }
 

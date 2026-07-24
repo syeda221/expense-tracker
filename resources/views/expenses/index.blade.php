@@ -18,14 +18,13 @@
                 <form method="GET" action="{{ route('expenses.index') }}">
                     <input type="text" name="search" class="filter-input filter-search" placeholder="Search description or merchant..." value="{{ $filters['search'] ?? '' }}">
                     <input type="text" name="category" class="filter-input filter-sm" placeholder="Category" value="{{ $filters['category'] ?? '' }}">
-                    <input type="text" name="payment_method" class="filter-input filter-sm" placeholder="Payment" value="{{ $filters['payment_method'] ?? '' }}">
                     <input type="date" name="date_from" class="filter-input filter-date" value="{{ $filters['date_from'] ?? '' }}">
                     <input type="date" name="date_to" class="filter-input filter-date" value="{{ $filters['date_to'] ?? '' }}">
                     <button type="submit" class="btn-premium btn-primary sm">
                         <i data-lucide="search"></i>
                         Search
                     </button>
-                    @if (request()->anyFilled(['search', 'category', 'payment_method', 'date_from', 'date_to']))
+                    @if (request()->anyFilled(['search', 'category', 'date_from', 'date_to']))
                         <a href="{{ route('expenses.index') }}" class="btn-premium btn-secondary sm">Clear</a>
                     @endif
                 </form>
@@ -42,7 +41,7 @@
                         <th>Description</th>
                         <th>Category</th>
                         <th>Merchant</th>
-                        <th>Payment</th>
+
                         <th style="text-align:right">Amount</th>
                         <th style="text-align:center">AI</th>
                         <th style="text-align:right">Actions</th>
@@ -61,7 +60,7 @@
                                 <span class="badge-premium category">{{ $expense->category }}</span>
                             </td>
                             <td style="font-size:13px;color:var(--text-muted)">{{ $expense->merchant ?? '—' }}</td>
-                            <td style="font-size:13px;color:var(--text-muted)">{{ $expense->payment_method }}</td>
+
                             <td class="amount-cell">RS {{ number_format($expense->amount, 2) }}</td>
                             <td style="text-align:center">
                                 @if ($expense->ai_confidence !== null)
@@ -89,7 +88,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8">
+                            <td colspan="7">
                                 <div class="empty-state">
                                     <div class="owl-container" style="margin-bottom: 16px;">
                                         <video autoplay loop muted playsinline class="owl-video" style="width:160px;height:160px;margin:-16px 0">

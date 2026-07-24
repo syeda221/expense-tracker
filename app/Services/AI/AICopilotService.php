@@ -146,10 +146,13 @@ class AICopilotService
         } elseif ($budgetAmount > 0 && $spendableAmount < ($budgetAmount * 0.20)) {
             $statusLabel = 'Warning (Low Budget)';
         }
+        
+        $categoryBreakdown = app(\App\Repositories\ExpenseRepositoryInterface::class)->getCategoryDistribution($user->id);
 
         $financialState = [
             'recent_actions' => $context,
             'overall_status' => $overallStatus,
+            'category_breakdown' => $categoryBreakdown->toArray(),
             'active_goals' => $activeGoals->toArray(),
             'total_savings_target' => $totalSavingsTarget,
             'spendable_amount' => $spendableAmount,
@@ -168,9 +171,9 @@ Action Results & Backend Data Context (JSON):
 Original User Message: "{message}"
 
 CRITICAL RESPONSE RULES:
-1. Understand the user's intent and read the calculated data from the JSON above.
+1. Understand the user's intent and read the calculated data from the JSON above (including overall_status and category_breakdown).
 2. DO NOT perform calculations. DO NOT invent numbers. Use ONLY the values provided by the backend.
-3. Generate a natural, human-like response.
+3. Generate a natural, human-like response. If they ask about a specific category, look it up in category_breakdown.
 4. EXTREMELY IMPORTANT: Keep responses extremely short (1-2 lines maximum) for simple questions like checking balances or budgets. DO NOT add unnecessary filler.
 5. If the user asks a complex question, provide a slightly more detailed explanation (3-5 lines maximum).
 6. Give one very short practical suggestion or piece of financial advice.

@@ -48,11 +48,17 @@ class ExpenseService
 
     public function create(array $data): Expense
     {
+        if (isset($data['category'])) {
+            $data['category'] = ucwords(strtolower(trim($data['category'])));
+        }
         return $this->expenseRepository->create($data);
     }
 
     public function update(Expense $expense, array $data): Expense
     {
+        if (isset($data['category'])) {
+            $data['category'] = ucwords(strtolower(trim($data['category'])));
+        }
         return $this->expenseRepository->update($expense, $data);
     }
 

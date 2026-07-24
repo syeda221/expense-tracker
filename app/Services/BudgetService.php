@@ -17,6 +17,7 @@ class BudgetService
     public function setBudget(int $userId, float $amount, ?string $category = null, string $periodType = 'monthly', ?string $periodStart = null): array
     {
         $periodStart ??= now()->startOfMonth()->toDateString();
+        $category = $category ? ucwords(strtolower(trim($category))) : null;
 
         $existing = $this->budgetRepo->findByCategory($userId, $category, $periodType, $periodStart);
 
@@ -47,6 +48,7 @@ class BudgetService
 
     public function getStatus(int $userId, ?string $category = null): array
     {
+        $category = $category ? ucwords(strtolower(trim($category))) : null;
         $periodStart = now()->startOfMonth()->toDateString();
         $periodType = 'monthly';
         $periodEnd = now()->endOfMonth()->toDateString();

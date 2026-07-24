@@ -240,9 +240,10 @@
         </div>
     </div>
 
-    {{-- Budget summary card --}}
-    @if ($budgetSummary['has_budget'] ?? false)
-    <div class="dashboard-widgets fade-in-up stagger-5" style="margin-top:24px">
+    {{-- Budget & Goals summary row --}}
+    @if (($budgetSummary['has_budget'] ?? false) || (isset($activeGoals) && $activeGoals->isNotEmpty()))
+    <div class="dashboard-widgets fade-in-up stagger-5" style="margin-top:24px; display:grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px;">
+        @if ($budgetSummary['has_budget'] ?? false)
         <div class="card-premium">
             <div class="card-header">
                 <div class="widget-header" style="margin-bottom:0">
@@ -348,6 +349,57 @@
                 </div>
             </div>
         </div>
+        @endif
+
+        @if (isset($activeGoals) && $activeGoals->isNotEmpty())
+        <div class="card-premium">
+            <div class="card-header">
+                <div class="widget-header" style="margin-bottom:0">
+                    <h5 class="widget-title">
+                        <i data-lucide="piggy-bank"></i>
+                        Savings Goals
+                    </h5>
+                    <a href="{{ route('advisor') }}" class="widget-action">Manage</a>
+                </div>
+            </div>
+            <div class="card-body">
+                @foreach($activeGoals as $goal)
+                    @php 
+                        $pct = $goal->target_amount > 0 ? min(100, round(($goal->saved_amount / $goal->target_amount) * 100)) : 0; 
+                    @endphp
+                    <div style="margin-bottom:20px">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                            <div>
+                                <span style="font-size:14px;font-weight:700;color:var(--text);display:block;">{{ $goal->name }}</span>
+                                @if ($goal->deadline)
+                                <span style="font-size:11px;color:var(--text-muted)">Target: {{ \Carbon\Carbon::parse($goal->deadline)->format('M d, Y') }}</span>
+                                @endif
+                            </div>
+                            <div style="text-align:right">
+                                <span style="font-size:13px;font-weight:600;color:var(--primary)">RS {{ number_format($goal->saved_amount, 0) }}</span>
+                                <span style="font-size:11px;color:var(--text-dim)">/ RS {{ number_format($goal->target_amount, 0) }}</span>
+                            </div>
+                        </div>
+                        <div class="progress-premium" style="height: 12px; border-radius: 6px; background:var(--bg-hover);">
+                            <div class="progress-bar"
+                                 style="width:{{ $pct }}%; border-radius: 6px; background:{{ $pct >= 100 ? 'var(--success)' : 'var(--primary)' }}; box-shadow:0 2px 4px rgba(22,199,183,0.3);">
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+                
+                <div style="margin-top:24px;background:var(--bg-hover);border-radius:12px;padding:16px;display:flex;align-items:center;gap:12px">
+                    <div style="width:40px;height:40px;border-radius:10px;background:rgba(14,207,179,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <i data-lucide="sparkles" style="width:20px;height:20px;color:var(--primary)"></i>
+                    </div>
+                    <div>
+                        <p style="margin:0;font-size:13px;font-weight:600;color:var(--text)">AI Smart Saving</p>
+                        <p style="margin:2px 0 0;font-size:12px;color:var(--text-dim)">Ollie automatically reserves these amounts from your spendable budget to keep you on track.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
     </div>
     @endif
 

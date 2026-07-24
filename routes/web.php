@@ -85,6 +85,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         $stats['chartRanges'] = $ranges;
         $stats['budgetSummary'] = $budgetSummary;
+        $stats['activeGoals'] = \App\Models\Goal::where('user_id', auth()->id())->where('status', 'active')->get();
 
         return view('dashboard', $stats);
     })->name('dashboard');

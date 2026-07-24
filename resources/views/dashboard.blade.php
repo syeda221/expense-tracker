@@ -37,7 +37,7 @@
                     <div class="stat-card-content">
                         <p class="stat-card-label">Total Expenses</p>
                         <h3 class="stat-card-value">RS {{ number_format($yearlyTotal, 2) }}</h3>
-                        <span class="stat-card-change" style="background:var(--bg-hover); padding: 4px 10px; border-radius: 100px; color:var(--text); margin-top: 8px;">
+                        <span class="stat-card-change" style="background:var(--bg-hover); padding: 4px 10px; border-radius: 100px; color:var(--text); margin-top: 8px; white-space: nowrap;">
                             <i data-lucide="{{ $monthlyChange >= 0 ? 'trending-up' : 'trending-down' }}" style="width:14px;height:14px; color: {{ $monthlyChange >= 0 ? 'var(--negative)' : 'var(--positive)' }}"></i>
                             <span style="font-weight:600">{{ number_format(abs($monthlyChange), 1) }}%</span> <span style="color:var(--text-muted)">vs last month</span>
                         </span>
@@ -566,7 +566,7 @@
                 type: 'doughnut',
                 data: {
                     labels: categoryData.map(function (d) {
-                        return d.category + ' ($' + new Intl.NumberFormat('en-US', { minimumFractionDigits: 0 }).format(d.total) + ')';
+                        return d.category + ' (RS ' + new Intl.NumberFormat('en-US', { minimumFractionDigits: 0 }).format(d.total) + ')';
                     }),
                     datasets: [{
                         data: categoryData.map(function (d) { return parseFloat(d.total); }),

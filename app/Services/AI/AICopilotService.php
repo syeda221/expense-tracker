@@ -162,7 +162,7 @@ class AICopilotService
 
         // 5. Generate Conversational Response
         $systemPrompt = <<<PROMPT
-You are Ollie, a smart, friendly, and human-like financial advisor for a Pakistani user (amounts in RS).
+You are Foresight, a smart, friendly, and human-like financial advisor for a Pakistani user (amounts in RS).
 You are NOT a calculator. All calculations have already been performed by the backend.
 
 Action Results & Backend Data Context (JSON):

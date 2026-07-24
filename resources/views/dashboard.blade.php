@@ -5,39 +5,41 @@
         $highestCatName = $categoryDistribution->isNotEmpty() ? $categoryDistribution->first()->category : 'N/A';
     @endphp
 
-    <div class="page-header fade-in" style="position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;background:transparent;border:none;padding:180px 24px 20px;margin-top:40px;margin-bottom:20px;overflow:visible;">
-        <div class="owl-container" style="position:absolute;top:-80px;left:50%;transform:translateX(-50%);z-index:3;width:240px;height:240px;display:flex;align-items:flex-end;justify-content:center;pointer-events:none;">
-            <!-- Removed radial glow per user request to keep video original -->
-            <video autoplay loop muted playsinline class="owl-video" style="width:100%;height:100%;object-fit:cover;object-position:bottom;pointer-events:auto;">
+    <div class="page-header fade-in" style="position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;background:transparent;border:none;padding:200px 24px 40px;margin-top:40px;margin-bottom:32px;overflow:visible;">
+        <div class="owl-container" style="position:absolute;top:-80px;left:50%;transform:translateX(-50%);z-index:3;width:260px;height:260px;display:flex;align-items:flex-end;justify-content:center;pointer-events:none;">
+            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:180px;height:180px;background:radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);border-radius:50%;z-index:-1;"></div>
+            <video autoplay loop muted playsinline class="owl-video" style="width:100%;height:100%;object-fit:cover;object-position:bottom;pointer-events:auto;animation: owlBookBreathing 4s ease-in-out infinite;">
                 <source src="{{ asset('video/hellow.mp4') }}" type="video/mp4">
             </video>
             
-            <div style="position:absolute;top:40px;right:0px;background:var(--primary);color:#fff;font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px;box-shadow:0 4px 12px rgba(22,199,183,0.3);white-space:nowrap;transform:rotate(5deg);pointer-events:auto;">AI Active</div>
+            <div style="position:absolute;top:40px;right:10px;background:var(--primary);color:#fff;font-size:11px;font-weight:800;padding:4px 12px;border-radius:20px;box-shadow:0 4px 12px rgba(22,199,183,0.3);white-space:nowrap;transform:rotate(5deg);pointer-events:auto;">AI Active</div>
         </div>
 
         <div style="position:relative;z-index:2">
-            <h1 class="page-title" style="margin:0;font-size:32px;font-weight:800;letter-spacing:-0.02em;">Good {{ now()->hour < 12 ? 'morning' : (now()->hour < 17 ? 'afternoon' : 'evening') }}, {{ Auth::user()->name }}!</h1>
-            <p class="page-subtitle" style="margin:12px auto 0;font-size:16px;color:var(--text-muted);line-height:1.6;max-width:400px;">I've got your financial overview ready.<br>Let's make it a great day!</p>
-            <div style="margin-top: 24px;">
-                <a href="{{ route('expenses.create') }}" class="btn-premium btn-primary" style="padding: 10px 24px; font-weight: 600;">+ Add Expense</a>
+            <h1 class="page-title" style="margin:0;font-size:36px;font-weight:800;letter-spacing:-0.03em;">Hi  {{ Auth::user()->name }}!</h1>
+            <p class="page-subtitle" style="margin:16px auto 0;font-size:16px;color:var(--text-muted);line-height:1.6;max-width:400px;">Your financial overview is ready.<br>Let's make it a great day!</p>
+            <div style="margin-top: 32px;">
+                <a href="{{ route('expenses.create') }}" class="btn-premium btn-primary" style="padding: 12px 28px; font-weight: 600; font-size: 15px;">
+                    <i data-lucide="plus" style="width:18px;height:18px;"></i>
+                    Add Expense
+                </a>
             </div>
         </div>
     </div>
 
-    <div class="dashboard-stats fade-in-up stagger-1" style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 24px;">
-        <div class="card-premium hover-lift" style="background: var(--primary); color: white; border: none; overflow: hidden; position: relative;">
-            <div style="position:absolute; top:-20px; right:-20px; width:100px; height:100px; background:rgba(255,255,255,0.1); border-radius:50%;"></div>
-            <div class="card-body" style="position:relative; z-index:1;">
+    <div class="dashboard-stats fade-in-up stagger-1" style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 32px;">
+        <div class="card-premium hover-lift" style="background: var(--bg-card); overflow: hidden; position: relative;">
+            <div class="card-body">
                 <div class="stat-card">
-                    <div class="stat-card-icon" style="background:rgba(255,255,255,0.2);color:white">
+                    <div class="stat-card-icon" style="background:var(--accent-soft);color:var(--primary);border-radius:50%;width:48px;height:48px;">
                         <i data-lucide="wallet"></i>
                     </div>
                     <div class="stat-card-content">
-                        <p class="stat-card-label" style="color:rgba(255,255,255,0.8)">Total Expenses</p>
-                        <h3 class="stat-card-value" style="color:white">RS {{ number_format($yearlyTotal, 2) }}</h3>
-                        <span class="stat-card-change" style="background:rgba(255,255,255,0.15); color:white; border:none;">
-                            <i data-lucide="{{ $monthlyChange >= 0 ? 'trending-up' : 'trending-down' }}" style="width:14px;height:14px"></i>
-                            {{ number_format(abs($monthlyChange), 1) }}% vs last month
+                        <p class="stat-card-label">Total Expenses</p>
+                        <h3 class="stat-card-value">RS {{ number_format($yearlyTotal, 2) }}</h3>
+                        <span class="stat-card-change" style="background:var(--bg-hover); padding: 4px 10px; border-radius: 100px; color:var(--text); margin-top: 8px;">
+                            <i data-lucide="{{ $monthlyChange >= 0 ? 'trending-up' : 'trending-down' }}" style="width:14px;height:14px; color: {{ $monthlyChange >= 0 ? 'var(--negative)' : 'var(--positive)' }}"></i>
+                            <span style="font-weight:600">{{ number_format(abs($monthlyChange), 1) }}%</span> <span style="color:var(--text-muted)">vs last month</span>
                         </span>
                     </div>
                 </div>
@@ -47,13 +49,13 @@
         <div class="card-premium hover-lift">
             <div class="card-body">
                 <div class="stat-card">
-                    <div class="stat-card-icon" style="background:rgba(99,102,241,0.12);color:var(--secondary)">
+                    <div class="stat-card-icon" style="background:rgba(59, 130, 246, 0.1);color:var(--info);border-radius:50%;width:48px;height:48px;">
                         <i data-lucide="calendar"></i>
                     </div>
                     <div class="stat-card-content">
                         <p class="stat-card-label">Monthly Spending</p>
-                        <h3 class="stat-card-value" style="color:var(--secondary)">RS {{ number_format($monthlyTotal, 2) }}</h3>
-                        <span class="stat-card-change neutral">{{ $monthlyCount }} transactions</span>
+                        <h3 class="stat-card-value" style="color:var(--text)">RS {{ number_format($monthlyTotal, 2) }}</h3>
+                        <span class="stat-card-change neutral" style="margin-top: 8px;">{{ $monthlyCount }} transactions</span>
                     </div>
                 </div>
             </div>
@@ -62,13 +64,13 @@
         <div class="card-premium hover-lift">
             <div class="card-body">
                 <div class="stat-card">
-                    <div class="stat-card-icon" style="background:var(--warning-subtle);color:var(--warning)">
-                        <i data-lucide="trending-up"></i>
+                    <div class="stat-card-icon" style="background:var(--warning-subtle);color:var(--warning);border-radius:50%;width:48px;height:48px;">
+                        <i data-lucide="pie-chart"></i>
                     </div>
                     <div class="stat-card-content">
                         <p class="stat-card-label">Highest Category</p>
-                        <h3 class="stat-card-value" style="color:var(--warning)">RS {{ number_format($highestCatTotal, 2) }}</h3>
-                        <span class="stat-card-change neutral">{{ $highestCatName }}</span>
+                        <h3 class="stat-card-value" style="color:var(--text)">RS {{ number_format($highestCatTotal, 2) }}</h3>
+                        <span class="stat-card-change neutral" style="margin-top: 8px;">{{ $highestCatName }}</span>
                     </div>
                 </div>
             </div>
@@ -77,13 +79,13 @@
         <div class="card-premium hover-lift">
             <div class="card-body">
                 <div class="stat-card">
-                    <div class="stat-card-icon" style="background:var(--success-subtle);color:var(--success)">
-                        <i data-lucide="bot"></i>
+                    <div class="stat-card-icon" style="background:var(--success-subtle);color:var(--success);border-radius:50%;width:48px;height:48px;">
+                        <i data-lucide="sparkles"></i>
                     </div>
                     <div class="stat-card-content">
                         <p class="stat-card-label">AI Categorized</p>
-                        <h3 class="stat-card-value" style="color:var(--success)">{{ $expenseCount }}</h3>
-                        <span class="stat-card-change neutral">All expenses classified</span>
+                        <h3 class="stat-card-value" style="color:var(--text)">{{ $expenseCount }}</h3>
+                        <span class="stat-card-change neutral" style="margin-top: 8px;">All expenses classified</span>
                     </div>
                 </div>
             </div>
@@ -186,38 +188,38 @@
                 @if ($recentExpenses->isNotEmpty())
                     <div style="padding:0">
                         @foreach ($recentExpenses->take(5) as $expense)
-                            <a href="{{ route('expenses.show', $expense) }}" style="display:flex;align-items:center;gap:12px;padding:14px 20px;text-decoration:none;transition:background var(--transition-fast);border-bottom:1px solid var(--border-light)">
-                                <div style="width:36px;height:36px;border-radius:10px;background:var(--bg-hover);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--text-dim)">
+                            <a href="{{ route('expenses.show', $expense) }}" class="transaction-item" style="display:flex;align-items:center;gap:16px;padding:16px 24px;text-decoration:none;transition:all var(--transition-fast);border-bottom:1px solid var(--border-light)">
+                                <div style="width:42px;height:42px;border-radius:12px;background:var(--primary-subtle);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--primary)">
                                     @switch($expense->category)
-                                        @case('Food & Dining')<i data-lucide="utensils" style="width:16px;height:16px"></i>@break
-                                        @case('Shopping')<i data-lucide="shopping-bag" style="width:16px;height:16px"></i>@break
-                                        @case('Transport')<i data-lucide="car" style="width:16px;height:16px"></i>@break
-                                        @case('Groceries')<i data-lucide="shopping-cart" style="width:16px;height:16px"></i>@break
-                                        @case('Bills')<i data-lucide="file-text" style="width:16px;height:16px"></i>@break
-                                        @case('Utilities')<i data-lucide="zap" style="width:16px;height:16px"></i>@break
-                                        @case('Healthcare')<i data-lucide="heart-pulse" style="width:16px;height:16px"></i>@break
-                                        @case('Entertainment')<i data-lucide="film" style="width:16px;height:16px"></i>@break
-                                        @case('Subscription')<i data-lucide="repeat" style="width:16px;height:16px"></i>@break
-                                        @case('Travel')<i data-lucide="plane" style="width:16px;height:16px"></i>@break
-                                        @default<i data-lucide="circle-dollar" style="width:16px;height:16px"></i>
+                                        @case('Food & Dining')<i data-lucide="utensils" style="width:20px;height:20px"></i>@break
+                                        @case('Shopping')<i data-lucide="shopping-bag" style="width:20px;height:20px"></i>@break
+                                        @case('Transport')<i data-lucide="car" style="width:20px;height:20px"></i>@break
+                                        @case('Groceries')<i data-lucide="shopping-cart" style="width:20px;height:20px"></i>@break
+                                        @case('Bills')<i data-lucide="file-text" style="width:20px;height:20px"></i>@break
+                                        @case('Utilities')<i data-lucide="zap" style="width:20px;height:20px"></i>@break
+                                        @case('Healthcare')<i data-lucide="heart-pulse" style="width:20px;height:20px"></i>@break
+                                        @case('Entertainment')<i data-lucide="film" style="width:20px;height:20px"></i>@break
+                                        @case('Subscription')<i data-lucide="repeat" style="width:20px;height:20px"></i>@break
+                                        @case('Travel')<i data-lucide="plane" style="width:20px;height:20px"></i>@break
+                                        @default<i data-lucide="circle-dollar" style="width:20px;height:20px"></i>
                                     @endswitch
                                 </div>
                                 <div style="flex:1;min-width:0">
-                                    <div style="font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ Str::limit($expense->description, 35) }}</div>
-                                    <div style="font-size:12px;color:var(--text-dim);display:flex;align-items:center;gap:8px">
+                                    <div style="font-size:15px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ Str::limit($expense->description, 35) }}</div>
+                                    <div style="font-size:13px;color:var(--text-dim);display:flex;align-items:center;gap:8px;margin-top:2px;">
                                         <span>{{ $expense->expense_date->format('M d, Y') }}</span>
                                         @if ($expense->merchant)
                                             <span>·</span>
                                             <span>{{ $expense->merchant }}</span>
                                         @endif
                                         @if ($expense->is_recurring)
-                                            <span class="recurring-badge" style="font-size:10px">Recurring</span>
+                                            <span class="badge-premium category" style="font-size:10px;padding:2px 8px;background:rgba(59, 130, 246, 0.1);color:var(--info);">Recurring</span>
                                         @endif
                                     </div>
                                 </div>
                                 <div style="text-align:right;flex-shrink:0">
-                                    <div style="font-size:15px;font-weight:700;color:var(--text)">RS {{ number_format($expense->amount, 2) }}</div>
-                                    <span class="badge-premium category" style="font-size:10px">{{ $expense->category }}</span>
+                                    <div style="font-size:16px;font-weight:700;color:var(--text);font-family:var(--font-mono);">RS {{ number_format($expense->amount, 2) }}</div>
+                                    <span class="badge-premium category" style="font-size:11px;margin-top:4px;">{{ $expense->category }}</span>
                                 </div>
                             </a>
                         @endforeach
@@ -263,41 +265,41 @@
                             $budget = $overall['budget'] ?? 0;
                             $remaining = $overall['remaining'] ?? 0;
                             $ringColor = $pct >= 100 ? 'var(--danger)' : ($pct >= 80 ? 'var(--warning)' : 'var(--primary)');
-                            $circum = 2 * pi() * 42;
+                            $circum = 2 * pi() * 60;
                             $offset = $circum - ($pct / 100) * $circum;
                         @endphp
-                        <svg width="110" height="110" viewBox="0 0 100 100" style="display:block;margin:0 auto">
-                            <circle cx="50" cy="50" r="42" fill="none" stroke="var(--border-subtle)" stroke-width="8"/>
-                            <circle cx="50" cy="50" r="42" fill="none" stroke="{{ $ringColor }}" stroke-width="8"
+                        <svg width="150" height="150" viewBox="0 0 140 140" style="display:block;margin:0 auto">
+                            <circle cx="70" cy="70" r="60" fill="none" stroke="var(--border-subtle)" stroke-width="12"/>
+                            <circle cx="70" cy="70" r="60" fill="none" stroke="{{ $ringColor }}" stroke-width="12"
                                     stroke-linecap="round"
                                     stroke-dasharray="{{ $circum }}"
                                     stroke-dashoffset="{{ max(0, $offset) }}"
-                                    transform="rotate(-90 50 50)"
+                                    transform="rotate(-90 70 70)"
                                     style="transition:stroke-dashoffset 0.6s ease"/>
                         </svg>
-                        <div style="margin-top:8px">
-                            <span style="font-size:22px;font-weight:800;color:{{ $ringColor }};font-family:var(--font-mono)">{{ $pct }}%</span>
-                            <p style="margin:2px 0 0;font-size:11px;color:var(--text-dim)">used</p>
+                        <div style="margin-top:16px">
+                            <span style="font-size:32px;font-weight:800;color:{{ $ringColor }};font-family:var(--font-mono);letter-spacing:-1px;">{{ $pct }}%</span>
+                            <p style="margin:2px 0 0;font-size:13px;color:var(--text-dim);font-weight:500;">budget used</p>
                         </div>
                     </div>
                     {{-- Details --}}
                     <div>
-                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-                            <div style="padding:12px;background:var(--bg-hover);border-radius:8px">
-                                <p style="margin:0 0 2px;font-size:11px;color:var(--text-dim)">Budget</p>
-                                <p style="margin:0;font-size:18px;font-weight:700;color:var(--text);font-family:var(--font-mono)">RS {{ number_format($budget, 2) }}</p>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+                            <div style="padding:16px;background:var(--bg-hover);border-radius:12px">
+                                <p style="margin:0 0 4px;font-size:12px;color:var(--text-dim);font-weight:600">Budget</p>
+                                <p style="margin:0;font-size:20px;font-weight:700;color:var(--text);font-family:var(--font-mono)">RS {{ number_format($budget, 2) }}</p>
                             </div>
-                            <div style="padding:12px;background:var(--bg-hover);border-radius:8px">
-                                <p style="margin:0 0 2px;font-size:11px;color:var(--text-dim)">Spent</p>
-                                <p style="margin:0;font-size:18px;font-weight:700;color:var(--primary);font-family:var(--font-mono)">RS {{ number_format($spent, 2) }}</p>
+                            <div style="padding:16px;background:var(--bg-hover);border-radius:12px">
+                                <p style="margin:0 0 4px;font-size:12px;color:var(--text-dim);font-weight:600">Spent</p>
+                                <p style="margin:0;font-size:20px;font-weight:700;color:var(--text);font-family:var(--font-mono)">RS {{ number_format($spent, 2) }}</p>
                             </div>
-                            <div style="padding:12px;background:var(--bg-hover);border-radius:8px">
-                                <p style="margin:0 0 2px;font-size:11px;color:var(--text-dim)">Remaining</p>
-                                <p style="margin:0;font-size:18px;font-weight:700;color:{{ $remaining > 0 ? 'var(--positive)' : 'var(--negative)' }};font-family:var(--font-mono)">RS {{ number_format($remaining, 2) }}</p>
+                            <div style="padding:16px;background:var(--bg-hover);border-radius:12px">
+                                <p style="margin:0 0 4px;font-size:12px;color:var(--text-dim);font-weight:600">Remaining</p>
+                                <p style="margin:0;font-size:20px;font-weight:700;color:{{ $remaining > 0 ? 'var(--positive)' : 'var(--negative)' }};font-family:var(--font-mono)">RS {{ number_format($remaining, 2) }}</p>
                             </div>
-                            <div style="padding:12px;background:var(--bg-hover);border-radius:8px">
-                                <p style="margin:0 0 2px;font-size:11px;color:var(--text-dim)">Daily Budget</p>
-                                <p style="margin:0;font-size:18px;font-weight:700;color:var(--text);font-family:var(--font-mono)">RS {{ number_format($overall['daily_budget'] ?? 0, 2) }}</p>
+                            <div style="padding:16px;background:var(--bg-hover);border-radius:12px">
+                                <p style="margin:0 0 4px;font-size:12px;color:var(--text-dim);font-weight:600">Daily Budget</p>
+                                <p style="margin:0;font-size:20px;font-weight:700;color:var(--text);font-family:var(--font-mono)">RS {{ number_format($overall['daily_budget'] ?? 0, 2) }}</p>
                             </div>
                         </div>
                         @if ($pct >= 100)
@@ -378,9 +380,9 @@
                                 <span style="font-size:11px;color:var(--text-dim)">/ RS {{ number_format($goal->target_amount, 0) }}</span>
                             </div>
                         </div>
-                        <div class="progress-premium" style="height: 12px; border-radius: 6px; background:var(--bg-hover);">
+                        <div class="progress-premium" style="height: 16px; border-radius: 8px; background:var(--bg-hover); margin-top:8px;">
                             <div class="progress-bar"
-                                 style="width:{{ $pct }}%; border-radius: 6px; background:{{ $pct >= 100 ? 'var(--success)' : 'var(--primary)' }}; box-shadow:0 2px 4px rgba(22,199,183,0.3);">
+                                 style="width:{{ $pct }}%; border-radius: 8px; background:{{ $pct >= 100 ? 'var(--success)' : 'linear-gradient(90deg, var(--primary), var(--accent-dim))' }}; box-shadow:0 2px 4px rgba(22,199,183,0.3);">
                             </div>
                         </div>
                     </div>
@@ -392,7 +394,7 @@
                     </div>
                     <div>
                         <p style="margin:0;font-size:13px;font-weight:600;color:var(--text)">AI Smart Saving</p>
-                        <p style="margin:2px 0 0;font-size:12px;color:var(--text-dim)">Ollie automatically reserves these amounts from your spendable budget to keep you on track.</p>
+                        <p style="margin:2px 0 0;font-size:12px;color:var(--text-dim)">Foresight automatically reserves these amounts from your spendable budget to keep you on track.</p>
                     </div>
                 </div>
             </div>
@@ -488,8 +490,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function () {
-        Chart.defaults.color = '#6B7280';
-        Chart.defaults.borderColor = '#E7ECF2';
+        Chart.defaults.color = '#64748B'; Chart.defaults.font.family = 'Inter';
+        Chart.defaults.borderColor = 'rgba(0, 0, 0, 0.04)';
 
         // ── Monthly bar chart ──
         const monthlyData = @json($monthlySpending);
@@ -501,8 +503,8 @@
 
         const barCtx = document.getElementById('monthlyChart').getContext('2d');
         const barGradient = barCtx.createLinearGradient(0, 0, 0, 280);
-        barGradient.addColorStop(0, 'rgba(22, 199, 183, 0.65)');
-        barGradient.addColorStop(1, 'rgba(22, 199, 183, 0.05)');
+        barGradient.addColorStop(0, '#16C7B7');
+        barGradient.addColorStop(1, '#0EA597');
 
         new Chart(barCtx, {
             type: 'bar',
@@ -512,9 +514,9 @@
                     label: 'Spending',
                     data: monthlyValues,
                     backgroundColor: barGradient,
-                    borderColor: '#16C7B7',
-                    borderWidth: 1,
-                    borderRadius: 6,
+                    borderColor: 'transparent',
+                    borderWidth: 3, borderColor: '#ffffff', hoverOffset: 4,
+                    borderRadius: 12,
                     borderSkipped: false,
                 }]
             },
@@ -528,7 +530,7 @@
                         titleColor: '#1F2937',
                         bodyColor: '#6B7280',
                         borderColor: '#E7ECF2',
-                        borderWidth: 1,
+                        borderWidth: 3, borderColor: '#ffffff', hoverOffset: 4,
                         padding: 12,
                         cornerRadius: 8,
                         callbacks: {
@@ -564,20 +566,20 @@
                     datasets: [{
                         data: categoryData.map(function (d) { return parseFloat(d.total); }),
                         backgroundColor: colors.slice(0, categoryData.length),
-                        borderWidth: 0,
+                        borderWidth: 3, borderColor: '#ffffff', hoverOffset: 4,
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    cutout: '70%',
+                    cutout: '75%',
                     plugins: {
                         legend: {
                             position: 'bottom',
                             labels: {
                                 color: '#6B7280',
-                                boxWidth: 8,
-                                padding: 8,
+                                boxWidth: 12,
+                                padding: 12,
                                 font: { size: 11 }
                             }
                         },
@@ -586,7 +588,7 @@
                             titleColor: '#1F2937',
                             bodyColor: '#6B7280',
                             borderColor: '#E7ECF2',
-                            borderWidth: 1,
+                            borderWidth: 3, borderColor: '#ffffff', hoverOffset: 4,
                             padding: 12,
                             cornerRadius: 8,
                             callbacks: {
@@ -627,7 +629,7 @@
 
             var ctx = chartEl.getContext('2d');
             var grad = ctx.createLinearGradient(0, 0, 0, 280);
-            grad.addColorStop(0, 'rgba(22, 199, 183, 0.3)');
+            grad.addColorStop(0, 'rgba(22, 199, 183, 0.2)');
             grad.addColorStop(1, 'rgba(22, 199, 183, 0.0)');
 
             if (spendingChart) { spendingChart.destroy(); }
@@ -639,9 +641,9 @@
                     datasets: [{
                         label: 'Spending',
                         data: values,
-                        borderColor: '#16C7B7',
+                        borderColor: 'transparent',
                         backgroundColor: grad,
-                        borderWidth: 2.5,
+                        borderWidth: 3, tension: 0.4,
                         pointRadius: 0,
                         pointHoverRadius: 5,
                         pointHoverBackgroundColor: '#16C7B7',
@@ -669,7 +671,7 @@
                             titleColor: '#1F2937',
                             bodyColor: '#16C7B7',
                             borderColor: 'rgba(22,199,183,0.2)',
-                            borderWidth: 1,
+                            borderWidth: 3, borderColor: '#ffffff', hoverOffset: 4,
                             padding: 12,
                             cornerRadius: 8,
                             displayColors: false,

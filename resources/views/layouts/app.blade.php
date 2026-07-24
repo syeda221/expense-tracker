@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name', 'Expense Tracker') }} — AI Expense Manager</title>
+    <title>{{ config('app.name', 'Foresight') }} — AI Expense Manager</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -23,7 +23,7 @@
                     <img src="{{ asset('images/logo.png') }}" style="width:100%; height:100%; object-fit:cover; transform:scale(2.0);" alt="Logo">
                 </div>
                 <div>
-                    <div class="sidebar-logo-text">ExpenseTrack</div>
+                    <div class="sidebar-logo-text">Foresight</div>
                     <span class="sidebar-logo-ai">AI</span>
                 </div>
             </div>

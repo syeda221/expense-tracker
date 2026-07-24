@@ -36,7 +36,7 @@ class AdvisorController extends Controller
         if (Expense::where('user_id', $user->id)->count() === 0) {
             return response()->json([
                 'success' => true,
-                'message' => 'Not enough spending data yet. Add a few expenses and Ollie will start giving personalized insights.'
+                'message' => 'Not enough spending data yet. Add a few expenses and Foresight will start giving personalized insights.'
             ]);
         }
 
@@ -67,7 +67,7 @@ class AdvisorController extends Controller
             \Log::error('Advisor weekly summary error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Ollie is thinking too hard right now. Please try again in a little while.'
+                'message' => 'Foresight is thinking too hard right now. Please try again in a little while.'
             ], 500);
         }
     }
@@ -80,7 +80,7 @@ class AdvisorController extends Controller
 
         $conversation = AdvisorConversation::firstOrCreate(
             ['user_id' => $user->id],
-            ['title' => 'Chat with Ollie']
+            ['title' => 'Chat with Foresight']
         );
 
         AdvisorMessage::create([
@@ -107,7 +107,7 @@ class AdvisorController extends Controller
             \Log::error('Advisor ask error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Ollie is thinking too hard right now. Please try again in a little while.'
+                'message' => 'Foresight is thinking too hard right now. Please try again in a little while.'
             ], 500);
         }
     }

@@ -11,7 +11,7 @@
             <div style="position:absolute;bottom:20px;width:300px;height:300px;background:radial-gradient(circle, rgba(22,199,183,0.2) 0%, rgba(22,199,183,0) 70%);border-radius:50%;z-index:-1;"></div>
             
             <video autoplay loop muted playsinline class="owl-video" style="width:100%;height:100%;object-fit:cover;object-position:bottom;pointer-events:auto;mix-blend-mode:darken;-webkit-mask-image:radial-gradient(circle at center 60%, black 50%, transparent 80%);mask-image:radial-gradient(circle at center 60%, black 50%, transparent 80%);">
-                <source src="{{ asset('video/Mascot_placing_wing_on_chin_202606242120.mp4') }}" type="video/mp4">
+                <source src="{{ asset('video/hellow.mp4') }}" type="video/mp4">
             </video>
             
             <div style="position:absolute;top:40px;right:0px;background:var(--primary);color:#fff;font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px;box-shadow:0 4px 12px rgba(22,199,183,0.3);white-space:nowrap;transform:rotate(5deg);pointer-events:auto;">AI Active</div>
@@ -163,7 +163,7 @@
                     <div class="empty-state">
                         <div class="owl-container" style="margin-bottom: 16px;">
                             <video autoplay loop muted playsinline class="owl-video" style="width:160px;height:160px;margin:-16px 0">
-                                <source src="{{ asset('video/Mascot_placing_wing_on_chin_202606242120.mp4') }}" type="video/mp4">
+                                <source src="{{ asset('video/hellow.mp4') }}" type="video/mp4">
                             </video>
                         </div>
                         <p class="empty-state-title">No categories yet</p>
@@ -228,7 +228,7 @@
                     <div class="empty-state">
                         <div class="owl-container" style="margin-bottom: 16px;">
                             <video autoplay loop muted playsinline class="owl-video" style="width:160px;height:160px;margin:-16px 0">
-                                <source src="{{ asset('video/Mascot_placing_wing_on_chin_202606242120.mp4') }}" type="video/mp4">
+                                <source src="{{ asset('video/hellow.mp4') }}" type="video/mp4">
                             </video>
                         </div>
                         <p class="empty-state-title">No transactions yet</p>
